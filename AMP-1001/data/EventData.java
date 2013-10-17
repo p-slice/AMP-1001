@@ -15,7 +15,7 @@ public class EventData extends ListenerAdapter {
 		Channel chan = event.getChannel();
 		User user = event.getUser();
 		
-		if (chan.getName().equals("#p_slice"))
+		if (chan.getName().equals("#p_slice") && !user.getNick().equals(bot.getNick()))
 			bot.sendMessage(chan, "Welcome, " + user.getNick());
 	}
 }

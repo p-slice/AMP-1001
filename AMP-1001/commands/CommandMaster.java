@@ -35,6 +35,12 @@ public class CommandMaster {
 		case "+kick":
 			commands.Kick.kick(chan, user, command, l);
 			break;
+		case "+info":
+			commands.Info.info(chan, user, command, l);
+			break;
+		case "+rank":
+			commands.GetRank.getRank(chan, user, command, l);
+			break;
 		default: break;
 		}
 	}

@@ -24,7 +24,11 @@ public class UserInfo {
 	}
 	
 	public int getPerms(){
-		Path filePath = new File(userNick + ".txt").toPath();
+		Path filePath = new File("user." + userNick + ".txt").toPath();
+		File f = new File("user." + userNick + ".txt");
+		if(!f.exists()){
+			return 0;
+		}
 		List<String> stringList = null;
 		try {
 			stringList = Files.readAllLines(filePath, charset);
