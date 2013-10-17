@@ -32,6 +32,9 @@ public class CommandMaster {
 		case "+leave":
 			commands.LeaveChan.leaveChan(chan, user, command, l);
 			break;
+		case "+kick":
+			commands.Kick.kick(chan, user, command, l);
+			break;
 		default: break;
 		}
 	}

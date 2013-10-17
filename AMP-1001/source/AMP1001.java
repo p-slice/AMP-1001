@@ -9,6 +9,7 @@ public class AMP1001 {
 	public static void main(String[] args){
 		
 		AMP1001.getListenerManager().addListener(new data.MessageData());
+		AMP1001.getListenerManager().addListener(new data.EventData());
 		
 		AMP1001.setName("AMP-1001");
 		AMP1001.setLogin("AMP-1001");
@@ -21,8 +22,6 @@ public class AMP1001 {
 			AMP1001.joinChannel("#p_slice");
 		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		
+		}		
 	}
-
 }

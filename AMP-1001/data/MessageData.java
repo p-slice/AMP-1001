@@ -18,6 +18,10 @@ public class MessageData extends ListenerAdapter {
 		if (message.startsWith("+")){
 			CommandMaster command = new CommandMaster(chan, user, message);
 			command.execute();
-		}		
+		}
+		boolean containsLanguage = data.AdminData.checkLanguage(message);
+		if (containsLanguage == true){
+			commands.Kick.languageKick(chan, user);
+		}
 	}
 }
