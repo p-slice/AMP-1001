@@ -10,8 +10,23 @@ Commands:
 (Commands are still being added, this won't be complete for a while)
 
 +say (#chan-name) <text>: Say something into the channel. Add the channel to specify which. Required rank: 10
+
 +quit: Quit the server. Required rank: 10
+
 +join <#chan-name>: Join the specified channel. Required rank: 7
+
 +leave (#chan-name): Leave the channel. Add the channel to specify which. Required rank: 7
+
++kick <player> (reason): Kick the specified player. Default reason is "Kicked from channel" else the given reason. Required rank: 10
+
++info <search>: Get bot's info of specified search. Required rank: 3
+
++rank <user>: Get the rank of the specified user. Required rank: 3
+
++server IP <server>: Get the IP of the specified server. Required rank: 5
+
++setrank <player> <rank>: Set the rank of the specified player. Required rank: 10
+
++adduser <name>: Create a new user. Defaults - nick = <name>, info = //, rank = 1. Required rank: 10
 
 More stuff will be added soon.
