@@ -41,6 +41,15 @@ public class CommandMaster {
 		case "+rank":
 			commands.GetRank.getRank(chan, user, command, l);
 			break;
+		case "+server":
+			commands.CheckServer.ping(chan, user, command, l);
+			break;
+		case "+setrank":
+			commands.EditUser.setRank(chan, user, command, l);
+			break;
+		case "+adduser":
+			commands.EditUser.addUser(chan, user, command, l);
+			break;
 		default: break;
 		}
 	}

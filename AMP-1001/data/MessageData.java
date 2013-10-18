@@ -20,7 +20,7 @@ public class MessageData extends ListenerAdapter {
 			command.execute();
 		}
 		boolean containsLanguage = data.AdminData.checkLanguage(message);
-		if (containsLanguage == true){
+		if (containsLanguage == true && chan.getName().equals("#p_slice")){
 			commands.Kick.languageKick(chan, user);
 		}
 	}
