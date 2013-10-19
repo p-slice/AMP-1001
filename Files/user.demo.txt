@@ -1,0 +1,3 @@
+demo (User's nick - will have more use later)
+(Info to be added on this line eventually)
+1 (User's rank)
