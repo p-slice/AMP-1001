@@ -3,16 +3,12 @@ package commands;
 import org.pircbotx.*;
 
 import source.AMP1001;
-import source.UserInfo;
 
-public class Kick {
+public class CommandKick {
 	
-	private static PircBotX bot = AMP1001.AMP1001;
+	private static PircBotX bot = AMP1001.AMP;
 	
-	public static void kick(Channel chan, User user, String message, int l){
-		
-		UserInfo userInfo = new UserInfo(user);
-		int p = userInfo.getPerms();
+	public static void execute(Channel chan, User user, String message, int l, int p){
 		
 		String[] messageSplit = message.split("[ ]");
 		
@@ -31,6 +27,7 @@ public class Kick {
 		else
 			bot.sendNotice(user, "Insufficient permissions!");
 	}
+	
 	public static void languageKick(Channel chan, User user){
 		bot.kick(chan, user, "That sort of language is not allowed in here.");
 	}

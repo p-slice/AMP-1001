@@ -3,17 +3,13 @@ package commands;
 import org.pircbotx.*;
 
 import source.AMP1001;
-import source.UserInfo;
 
-public class Disconnect {
+public class CommandDisconnect {
 	
-	private static PircBotX bot = AMP1001.AMP1001;
+	private static PircBotX bot = AMP1001.AMP;
 	
-	public static void disconnect(User user, int l){
-		
-		UserInfo userInfo = new UserInfo(user);
-		int p = userInfo.getPerms();
-		
+	public static void execute(User user, int l, int p){
+				
 		if (p >= 10){
 			if (l == 1)
 				bot.quitServer("Disconnecting");

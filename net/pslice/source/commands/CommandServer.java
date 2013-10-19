@@ -6,16 +6,12 @@ import java.net.*;
 import org.pircbotx.*;
 
 import source.AMP1001;
-import source.UserInfo;
 
-public class CheckServer {
+public class CommandServer {
 	
-	private static PircBotX bot = AMP1001.AMP1001;
+	private static PircBotX bot = AMP1001.AMP;
 	
-	public static void ping(Channel chan, User user, String message, int l){
-		
-		UserInfo userInfo = new UserInfo(user);
-		int p = userInfo.getPerms();
+	public static void execute(Channel chan, User user, String message, int l, int p){
 		
 		String[] messageSplit = message.split("[ ]");
 		String server = messageSplit[2];

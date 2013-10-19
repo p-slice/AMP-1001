@@ -5,11 +5,12 @@ import org.pircbotx.hooks.*;
 import org.pircbotx.hooks.events.*;
 
 import source.AMP1001;
+import source.Users;
 
 @SuppressWarnings("rawtypes")
 public class EventData extends ListenerAdapter {
 	
-	private static PircBotX bot = AMP1001.AMP1001;
+	private static PircBotX bot = AMP1001.AMP;
 	
 	public void onJoin(JoinEvent event){
 		Channel chan = event.getChannel();
@@ -17,5 +18,12 @@ public class EventData extends ListenerAdapter {
 		
 		if (chan.getName().equals("#p_slice") && !user.getNick().equals(bot.getNick()))
 			bot.sendMessage(chan, "Welcome, " + user.getNick());
+		
+		Users userInfo = new Users(user);
+		int p = userInfo.getPerms();
+		
+		if (p >= 5 && chan.getName().equals("#p_slice")){
+			bot.voice(chan, user);
+		}
 	}
 }

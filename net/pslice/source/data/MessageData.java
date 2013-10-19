@@ -4,7 +4,7 @@ import org.pircbotx.*;
 import org.pircbotx.hooks.*;
 import org.pircbotx.hooks.events.*;
 
-import commands.CommandMaster;
+import commands.Command;
 
 @SuppressWarnings("rawtypes")
 public class MessageData extends ListenerAdapter {
@@ -16,12 +16,12 @@ public class MessageData extends ListenerAdapter {
 		String message = event.getMessage();
 		
 		if (message.startsWith("+")){
-			CommandMaster command = new CommandMaster(chan, user, message);
+			Command command = new Command(chan, user, message);
 			command.execute();
 		}
 		boolean containsLanguage = data.AdminData.checkLanguage(message);
 		if (containsLanguage == true && chan.getName().equals("#p_slice")){
-			commands.Kick.languageKick(chan, user);
+			commands.CommandKick.languageKick(chan, user);
 		}
 	}
 }
