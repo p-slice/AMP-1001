@@ -21,12 +21,6 @@ public class Users {
 		this.userHostMask = user.getHostmask();
 	}
 	
-	public void addUser(){
-		//InputStream input = new FileInputStream(new File("src/test/resources/reader/utf-8.txt"));
-	    //Yaml yaml = new Yaml();
-	   // Object data = yaml.load(input);
-	}
-	
 	public String getNick(){
 		File f = new File("Files/user." + userNick + ".txt");
         if(!f.exists())
