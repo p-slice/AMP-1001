@@ -8,9 +8,9 @@ public class CommandSay {
 	
 	private static PircBotX bot = AMP1001.AMP;
 	
-	public static void execute(Channel chan, User user, String message, int l, int p){
+	public static void execute(Channel chan, User user, String[] messageSplit, int p){
 		
-		String[] messageSplit = message.split("[ ]");
+		int l = messageSplit.length;
 		String finalMessage;
 		
 		if (p >= 10){
