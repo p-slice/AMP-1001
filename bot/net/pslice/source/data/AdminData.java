@@ -12,7 +12,7 @@ public class AdminData {
 	static Charset charset = Charset.defaultCharset();
 	
 	public static boolean checkLanguage(String message){
-		Path filePath = new File("LanguageFiles.txt").toPath();
+		Path filePath = new File("Files/properties.language.txt").toPath();
 		List<String> stringList = null;
 		try {
 			stringList = Files.readAllLines(filePath, charset);

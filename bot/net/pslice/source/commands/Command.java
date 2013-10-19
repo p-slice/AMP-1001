@@ -58,8 +58,8 @@ public class Command {
 		case "+adduser":
 			commands.CommandUser.addUser(chan, user, messageSplit, p);
 			break;
-		case "+test":
-			//source.Users.getNick();
+		case "+commands":
+			commands.CommandGet.getCommandList(user, messageSplit, p);
 			break;
 		default:
 			bot.sendNotice(user, "Unknown command.");

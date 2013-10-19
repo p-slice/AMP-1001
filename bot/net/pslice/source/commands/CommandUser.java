@@ -49,7 +49,7 @@ public class CommandUser {
 				bot.sendNotice(user, "Insufficient permissions!");
 			break;
 		default:
-			bot.sendNotice(user, "Couldn't understand command!");
+			bot.sendNotice(user, "Unknown user setting!");
 			break;
 		}
 	}
@@ -86,7 +86,7 @@ public class CommandUser {
 				bot.sendNotice(user, "Insufficient permissions!");
 			break;
 		default:
-			bot.sendNotice(user, "Unknown user type!");
+			bot.sendNotice(user, "Unknown user setting!");
 		}
 	}
 	public static void addUser(Channel chan, User user, String[] messageSplit, int p){
