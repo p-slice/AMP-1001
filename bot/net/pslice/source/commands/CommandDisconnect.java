@@ -14,10 +14,10 @@ public class CommandDisconnect {
 			if (l == 1)
 				bot.quitServer("Disconnecting");
 			else
-				bot.sendNotice(user, "Incorrect parameters!");
+				bot.sendNotice(user, "Incorrect parameters! Command is '+quit'");
 		}
 		else
-			bot.sendNotice(user, "Insufficient permissions!");
+			bot.sendNotice(user, "Insufficient permissions! (Required rank: 10. Your rank: " + p +")");
 	}
 
 }

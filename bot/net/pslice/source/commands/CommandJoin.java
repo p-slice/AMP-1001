@@ -19,10 +19,10 @@ public class CommandJoin {
 				else
 					bot.sendNotice(user, "That's not a channel!");
 			else
-				bot.sendNotice(user, "Incorrect parameters!");
+				bot.sendNotice(user, "Incorrect parameters! Command is '+join' <channel>'");
 		}
 		else
-			bot.sendNotice(user, "Insufficient permissions!");
+			bot.sendNotice(user, "Insufficient permissions! (Required rank: 7. Your rank: " + p +")");
 	}
 
 }

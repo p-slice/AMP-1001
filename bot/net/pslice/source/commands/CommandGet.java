@@ -20,10 +20,10 @@ private static PircBotX bot = AMP1001.AMP;
 					bot.sendNotice(user, commandList[i]);
 			}
 			else
-				bot.sendNotice(user, "Incorrect parameters!");
+				bot.sendNotice(user, "Incorrect parameters! Command is '+commands'");
 		}
 		else
-			bot.sendNotice(user, "Insufficient permissions!");
+			bot.sendNotice(user, "Insufficient permissions! (Required rank: 0. Your rank: " + p +")");
 	}
 
 }

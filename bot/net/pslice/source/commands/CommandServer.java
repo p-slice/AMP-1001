@@ -15,15 +15,15 @@ public class CommandServer {
 		
 		int l = messageSplit.length;
 		String server = messageSplit[2];
-		InetAddress address = null;
-		try {
-			address = InetAddress.getByName(server);
-		} catch (UnknownHostException e1) {
-			e1.printStackTrace();
-		}
+		InetAddress address = null;		
 		
 		if (p >= 5){
-			if (l == 3){				
+			if (l == 3){
+				try {
+					address = InetAddress.getByName(server);
+				} catch (UnknownHostException e1) {
+					e1.printStackTrace();
+				}
 				switch (messageSplit[1].toLowerCase()){
 				case "ip":
 					bot.sendMessage(chan, "IP: " + address.getHostAddress());
@@ -40,14 +40,14 @@ public class CommandServer {
 					}
 					break;						
 				default:
-					bot.sendMessage(chan, "Couldn't resolve command");
+					bot.sendMessage(chan, "Unknown command, '+server " + messageSplit[1] + "'");
 					break;
 				}
 			}
 			else
-				bot.sendNotice(user, "Incorrect parameters!");
+				bot.sendNotice(user, "Incorrect parameters! Command is '+server IP <server>'");
 		}
 		else
-			bot.sendNotice(user, "Insufficient permissions!");
+			bot.sendNotice(user, "Insufficient permissions! (Required rank: 5. Your rank: " + p +")");
 	}
 }

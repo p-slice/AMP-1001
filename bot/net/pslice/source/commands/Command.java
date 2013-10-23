@@ -2,8 +2,7 @@ package commands;
 
 import org.pircbotx.*;
 
-import source.AMP1001;
-import source.BotUser;
+import source.*;
 
 public class Command {
 	
@@ -66,5 +65,4 @@ public class Command {
 			break;
 		}
 	}
-
 }

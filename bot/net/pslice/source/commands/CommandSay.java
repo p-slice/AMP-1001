@@ -14,25 +14,23 @@ public class CommandSay {
 		String finalMessage;
 		
 		if (p >= 10){
-			if (l >= 2){
-				if (messageSplit[1].startsWith("#")){
-					finalMessage = messageSplit[2];
-					for (int i = 3; i < messageSplit.length; i++)
-						finalMessage = finalMessage + " " + messageSplit[i];
-					bot.sendMessage(messageSplit[1], finalMessage);
-				} else {
-					finalMessage = messageSplit[1];
-					for (int i = 2; i < messageSplit.length; i++)
-						finalMessage = finalMessage + " " + messageSplit[i];
-					bot.sendMessage(chan, finalMessage);
-				}
-				
+			if (l >= 3 && messageSplit[1].startsWith("#")){
+				finalMessage = messageSplit[2];
+				for (int i = 3; i < messageSplit.length; i++)
+					finalMessage = finalMessage + " " + messageSplit[i];
+				bot.sendMessage(messageSplit[1], finalMessage);
+			}
+			else if (l >=2){
+				finalMessage = messageSplit[1];
+				for (int i = 2; i < messageSplit.length; i++)
+					finalMessage = finalMessage + " " + messageSplit[i];
+				bot.sendMessage(chan, finalMessage);
 			}
 			else
-				bot.sendNotice(user, "Incorrect parameters!");
+				bot.sendNotice(user, "Incorrect parameters! Command is '+say (channel) <message>'");
 		}
 		else
-			bot.sendNotice(user, "Insufficient permissions!");
+			bot.sendNotice(user, "Insufficient permissions! (Required rank: 10. Your rank: " + p +")");
 	}
 
 }

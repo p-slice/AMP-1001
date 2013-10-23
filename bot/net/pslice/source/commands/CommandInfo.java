@@ -33,10 +33,10 @@ public class CommandInfo {
 				}
 			}
 			else
-				bot.sendNotice(user, "Incorrect parameters!");
+				bot.sendNotice(user, "Incorrect parameters! Command is '+info <setting>'");
 		}
 		else
-			bot.sendNotice(user, "Insufficient permissions!");
+			bot.sendNotice(user, "Insufficient permissions! (Required rank: 3. Your rank: " + p +")");
 	}
 
 }

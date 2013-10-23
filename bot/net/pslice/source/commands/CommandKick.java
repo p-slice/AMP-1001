@@ -22,10 +22,10 @@ public class CommandKick {
 				bot.kick(chan, bot.getUser(messageSplit[1]), reason);
 			}
 			else
-				bot.sendNotice(user, "Incorrect parameters!");
+				bot.sendNotice(user, "Incorrect parameters! Command is '+kick <user> (reason)'");
 		}
 		else
-			bot.sendNotice(user, "Insufficient permissions!");
+			bot.sendNotice(user, "Insufficient permissions! (Required rank: 10. Your rank: " + p +")");
 	}
 	
 	public static void languageKick(Channel chan, User user){
