@@ -9,13 +9,15 @@ Overview:
 Commands:
 (Commands are still being added, this won't be complete for a while)
 
-+say ( #chan-name ) < text >: Say something into the channel. Add the channel to specify which. Required rank: 10
++commands: List all of these commands. Required rank: 0
+
++say ( channel ) < text >: Say something into the channel. Add the channel to specify which. Required rank: 10
 
 +quit: Quit the server. Required rank: 10
 
-+join < #chan-name >: Join the specified channel. Required rank: 7
++join < channel >: Join the specified channel. Required rank: 7
 
-+leave ( #chan-name ): Leave the channel. Add the channel to specify which. Required rank: 7
++leave ( channel ): Leave the channel. Add the channel to specify which. Required rank: 7
 
 +kick < player > ( reason ): Kick the specified player. Default reason is "Kicked from channel" else the given reason. Required rank: 10
 
