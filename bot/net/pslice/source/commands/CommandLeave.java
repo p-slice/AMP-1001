@@ -13,10 +13,16 @@ public class CommandLeave {
 		int l = messageSplit.length;
 		
 		if (p >= 7){
-			if (l == 1)
-				bot.partChannel(chan);
+			if (l == 1){
+				if (chan.getName().toString().equals("#p_slice"))
+					bot.sendNotice(user, "No, I refuse to.");
+				else
+					bot.partChannel(chan);
+			}
 			else if (l == 2) {
-				if (messageSplit[1].startsWith("#"))
+				if (messageSplit[1].equals("#p_slice"))
+					bot.sendNotice(user, "No, I refuse to.");
+				else if (messageSplit[1].startsWith("#"))
 					bot.partChannel(bot.getChannel(messageSplit[1]));
 				else
 					bot.sendNotice(user, "That's not a channel!");

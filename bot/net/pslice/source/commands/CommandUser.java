@@ -62,6 +62,11 @@ public class CommandUser {
 			if (l == 4){
 				switch (info){
 				case "rank":
+					int g = Integer.parseInt(messageSplit[3]);
+					if (messageSplit[2].equalsIgnoreCase("p_slice") && g < 10){
+						bot.sendNotice(user, "Hey, you can't do that!");
+						break;
+					}						
 					botUser.setRank(messageSplit[3]);
 					bot.sendMessage(chan, "Changed " + messageSplit[2] + "'s rank to " + messageSplit[3]);	
 					break;
