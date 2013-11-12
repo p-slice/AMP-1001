@@ -15,21 +15,22 @@ class CommandSolve {
 
     public static void execute(Channel chan, User user, String[] messageSplit, int p, int rank) {
 
-        String stringEquation = "";
-
-        for (int z = 0; z < messageSplit.length; z++)
-            stringEquation += messageSplit[z];
-        String[] equationSplit = stringEquation.split("((?<=[-?\\d,x])|(?=[-?\\d,x]))");
-
-        if (equationSplit[0].equals("+solvequadratic")){
-            List<String> list = new ArrayList<>();
-            list.add("+solve");
+        List<String> list = new ArrayList();
+        list.add("+solve");
+        int x = 1;
+        if (messageSplit[1].equals("quadratic")){
+            x = 2;
             list.add("quadratic");
-            for (int x = 1; x < equationSplit.length; x++)
-                list.add(equationSplit[x]);
-
-            equationSplit = list.toArray(new String[list.size()]);
         }
+        String equation = "";
+        for (int z = x; z < messageSplit.length; z++){
+            equation += messageSplit[z];
+        }
+        String[] equationSplit = equation.split("((?<=[+,\\-,*,/,^,x])|(?=[+,\\-,*,/,^,x]))");
+        for (int g = 0; g < equationSplit.length; g++)
+            list.add(equationSplit[g]);
+        equationSplit = list.toArray(new String[list.size()]);
+
         int l = equationSplit.length;
 
         if (p >= rank) {
@@ -58,7 +59,7 @@ class CommandSolve {
                 double result = solveFullEquation(equationSplit);
                 bot.sendMessage(chan, "Result: " + String.valueOf(result).replaceAll("\\.0\\b", ""));
             } else
-                Command.throwIncorrectParametersError(user, "+solve <equation>");
+                Command.throwIncorrectParametersError(user, "+solve (quadratic) <equation>");
         } else
             Command.throwNoRankError(user, rank, p);
     }
@@ -147,8 +148,6 @@ class CommandSolve {
 
             String res1 = String.valueOf(result1).replaceAll("\\.0\\b", "");
             String res2 = String.valueOf(result2).replaceAll("\\.0\\b", "");
-
-            System.out.println(res1.split("").length);
 
             if (res1.split("").length >= 6)
                 res1 = res1.substring(0, 6);
