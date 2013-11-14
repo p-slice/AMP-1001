@@ -1,13 +1,13 @@
 package net.pslice.bot.commands;
 
 import net.pslice.bot.AMP;
+import net.pslice.bot.data.MessageData;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 class CommandSolve {
@@ -15,32 +15,48 @@ class CommandSolve {
     private static final PircBotX bot = AMP.getBot();
 
     public static void execute(Channel chan, User user, String[] messageSplit, int p, int rank) {
+        String ops = "[-,+,*,/,^,(,), ]";
+
+        List<String> parts = new ArrayList<>();
 
         String[] equationSplit;
 
-        List<String> list = new ArrayList<>();
-
         if (messageSplit[messageSplit.length - 1].equals("+s"))
-            list.addAll(Arrays.asList(messageSplit).subList(0, messageSplit.length - 1));
+            parts.addAll(Arrays.asList(messageSplit).subList(0, messageSplit.length - 1));
         else {
-            list.add("+solve");
-            int x = 1;
-            if (messageSplit[1].equals("quadratic")) {
-                x = 2;
-                list.add("quadratic");
+            String equation = MessageData.getMessage();
+            if (equation.contains("(")
+                    && !equation.contains(")"))
+                equation += ")";
+            int start = 7;
+            parts.add(messageSplit[0]);
+            if (messageSplit[1].toLowerCase().equals("quadratic")) {
+                parts.add(messageSplit[1]);
+                start = 16;
             }
-            String equation = "";
-            for (int z = x; z < messageSplit.length; z++) {
-                equation += messageSplit[z];
+            equationSplit = equation.substring(start).split("((?<=op)|(?=op))".replace("op", ops));
+            for (int z = 0; z < equationSplit.length; z++) {
+                if (equationSplit[z].equals("-")
+                        && equationSplit[z + 1].matches("[\\d+]")) {
+                    if (z == 1) {
+                        parts.add("-" + equationSplit[z + 1]);
+                        z++;
+                    } else if (equationSplit[z - 1].matches(ops)) {
+                        parts.add("-" + equationSplit[z + 1]);
+                        z++;
+                    }
+                } else
+                    parts.add(equationSplit[z]);
             }
-            equationSplit = equation.split("((?<=[+,\\-,*,/,^,a-z,A-Z,(,)])|(?=[+,\\-,*,/,^,a-z,A_Z,(,)]))");
-            Collections.addAll(list, equationSplit);
-            for (int r = 0; r < list.size(); r++){
-                if (list.get(r).equals(""))
-                    list.remove(r);
+
+            for (int r = 0; r < parts.size(); r++) {
+                String part = parts.get(r);
+                if (part.equals("")
+                        || part.equals(" "))
+                    parts.remove(r);
             }
         }
-        equationSplit = list.toArray(new String[list.size()]);
+        equationSplit = parts.toArray(new String[parts.size()]);
 
         int l = equationSplit.length;
 
@@ -76,22 +92,22 @@ class CommandSolve {
     private static String solveFullEquation(String[] equation) {
 
         List<Double> brNumList = new ArrayList<>();
-        List<String>  brOpList = new ArrayList<>();
+        List<String> brOpList = new ArrayList<>();
 
         List<Double> numList = new ArrayList<>();
         List<String> opList = new ArrayList<>();
 
         for (int i = 1; i < equation.length; i++) {
-            if (equation[i].equals("(")){
+            if (equation[i].equals("(")) {
                 int f = 0;
-                for (int q = i; q < equation.length; q++){
+                for (int q = i; q < equation.length; q++) {
                     if (equation[q].equals("(") && q != i)
                         return "Error: cannot compute stacked brackets at this time!";
-                    else if (equation[q].matches("[+,\\-,*,/,^]+"))
+                    else if (equation[q].matches("[-+*/^]+"))
                         brOpList.add(equation[q]);
                     else if (equation[q].matches("-?\\d+"))
                         brNumList.add(Double.parseDouble(equation[q]));
-                    else if (equation[q].equals(")")){
+                    else if (equation[q].equals(")")) {
                         f = q;
                         break;
                     }
@@ -99,14 +115,15 @@ class CommandSolve {
                 double bracket = getResult(brNumList, brOpList);
 
                 numList.add(bracket);
-                if (!equation[i-1].matches("[+,\\-,*,/,^,+solve,)]+"))
+                if (!equation[i - 1].matches("[-+*/^,+solve]+"))
                     opList.add("*");
-                if (f+1 != equation.length){
-                    if (!equation[f+1].matches("[+,\\-,*,/,^,+s]+"))
+                if (f + 1 != equation.length) {
+                    if (!equation[f + 1].matches("[-+*/^,+s,(]+"))
                         opList.add("*");
                 }
                 brNumList.clear();
                 brOpList.clear();
+
                 i = f;
             }
             if (equation[i].matches("[+,\\-,*,/,^]+"))
@@ -161,7 +178,7 @@ class CommandSolve {
         return result;
     }
 
-    private static double getResult(List<Double> numList, List<String> opList){
+    private static double getResult(List<Double> numList, List<String> opList) {
         if (numList.size() == 0)
             numList.add((double) 1);
         while (numList.size() > 1) {
