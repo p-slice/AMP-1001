@@ -9,16 +9,39 @@ import org.pircbotx.User;
 
 public class Command {
 
-    private static final PircBotX bot = AMP.getBot();
+    static boolean isOverride = false;
+
+    protected static final PircBotX bot = AMP.getBot();
 
     public static void runCommand(Channel chan, User user, String[] messageSplit) {
         String command = messageSplit[0].toLowerCase();
         int l = messageSplit.length;
 
-        BotUser botUser = new BotUser(user.getNick());
-        int p = botUser.getRank();
+        int p;
+        if (isOverride) {
+            if (!user.getNick().equals("p_slice")) {
+                throwGenericError(user, "Bot is currently in override mode and will not accept commands from non-bot Operators.");
+                return;
+            } else
+                p = 100;
+        } else if (CommandUser.isOpBased()) {
+            if (chan.isOp(user))
+                p = 10;
+            else if (chan.hasVoice(user))
+                p = 7;
+            else
+                p = 3;
+        } else {
+            BotUser botUser = new BotUser(user.getNick());
+            p = botUser.getRank();
+        }
 
-        int r = Integer.parseInt(BotCommand.getCommandRank(messageSplit[0]));
+        if (messageSplit[0].equals("+override")) {
+            CommandOverride.execute(chan, user, l);
+            return;
+        }
+
+        int r = Integer.parseInt(BotCommand.getCommandRank(messageSplit[0].split("[\\+]")[1]));
 
         switch (command) {
             case "+quit":
@@ -66,33 +89,50 @@ public class Command {
             case "+setcommand":
                 CommandGet.setCommandInfo(chan, user, messageSplit, l, p);
                 break;
+            case "+ping":
+                CommandGet.pingPong(chan);
+                break;
+            case "+rename":
+                CommandInfo.setNick(user, messageSplit, l, p, r);
+                break;
+            case "+usertype":
+                CommandUser.toggleUserType(chan, user, l, p, r);
+                break;
             default:
                 throwUnknownCommandError(user, messageSplit[0]);
                 break;
         }
     }
 
-    private static void throwUnknownCommandError(User user, String command){
+    static void throwGenericError(User user, String message) {
+        bot.sendNotice(user, message);
+    }
+
+    private static void throwUnknownCommandError(User user, String command) {
         bot.sendNotice(user, String.format("The command '%s' is unknown! Use +commands for a list of possible commands.", command));
     }
 
-    static void throwNoRankError(User user, int rank, int p){
+    static void throwNoRankError(User user, int rank, int p) {
         bot.sendNotice(user, String.format("Insufficient permissions! (Required rank: %d. Your rank: %d)", rank, p));
     }
 
-    static void throwUnknownSettingError(User user, String command, String setting){
+    static void throwUnknownSettingError(User user, String command, String setting) {
         bot.sendNotice(user, String.format("The setting '%s' is unknown for the command '%s'.", setting, command));
     }
 
-    static void throwUnknownChannelError(User user, String channel){
+    static void throwUnknownChannelError(User user, String channel) {
         bot.sendNotice(user, String.format("'%s' is not a channel!", channel));
     }
 
-    static void throwImpossibleSettingError(User user, String setting, String arg, String type){
+    static void throwImpossibleSettingError(User user, String setting, String arg, String type) {
         bot.sendNotice(user, String.format("Argument '%s' cannot be set as a %s for %s", arg, type, setting));
     }
 
-    static void throwIncorrectParametersError(User user, String params){
+    static void throwIncorrectParametersError(User user, String params) {
         bot.sendNotice(user, String.format("Incorrect parameters! Command is '%s'!", params));
+    }
+
+    static void throwUsedNameError(User user) {
+        bot.sendNotice(user, "Error: nick is already in use!");
     }
 }

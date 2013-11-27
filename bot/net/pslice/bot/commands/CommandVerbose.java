@@ -1,13 +1,8 @@
 package net.pslice.bot.commands;
 
-import net.pslice.bot.AMP;
-import net.pslice.bot.source.BotCommand;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandVerbose {
-
-    private static final PircBotX bot = AMP.getBot();
+class CommandVerbose extends Command {
 
     public static void execute(User user, String[] messageSplit, int l, int p, int rank) {
 
@@ -23,12 +18,12 @@ class CommandVerbose {
                         bot.sendNotice(user, "Verbose deactivated!");
                         break;
                     default:
-                        Command.throwImpossibleSettingError(user, "verbose", messageSplit[1], "non-Boolean");
+                        throwImpossibleSettingError(user, "verbose", messageSplit[1], "non-Boolean");
                         break;
                 }
             } else
-                Command.throwIncorrectParametersError(user, "+verbose <setting>");
+                throwIncorrectParametersError(user, "+verbose <setting>");
         } else
-            Command.throwNoRankError(user, rank, p);
+            throwNoRankError(user, rank, p);
     }
 }

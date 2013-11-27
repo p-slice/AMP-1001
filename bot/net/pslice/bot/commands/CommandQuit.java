@@ -1,12 +1,8 @@
 package net.pslice.bot.commands;
 
-import net.pslice.bot.AMP;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandQuit {
-
-    private static final PircBotX bot = AMP.getBot();
+class CommandQuit extends Command {
 
     public static void execute(User user, int l, int p, int rank) {
 
@@ -14,8 +10,8 @@ class CommandQuit {
             if (l == 1)
                 bot.quitServer("Disconnecting");
             else
-                Command.throwIncorrectParametersError(user, "+quit");
+                throwIncorrectParametersError(user, "+quit");
         } else
-            Command.throwNoRankError(user, rank, p);
+            throwNoRankError(user, rank, p);
     }
 }

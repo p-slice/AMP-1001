@@ -5,7 +5,6 @@ import net.pslice.bot.data.MessageData;
 import net.pslice.bot.data.PrivateMessageData;
 import net.pslice.bot.source.FileReader;
 import org.pircbotx.PircBotX;
-import org.pircbotx.cap.SASLCapHandler;
 
 public class AMP {
 
@@ -15,8 +14,10 @@ public class AMP {
         return AMP;
     }
 
+    private static final String[] botInfo = FileReader.wholeText("properties.botinfo");
+
     public static void main(String[] args) {
-        String[] botInfo = FileReader.wholeText("properties.botinfo");
+
 
         AMP.setName(botInfo[0]);
         AMP.setLogin(botInfo[1]);
@@ -28,7 +29,6 @@ public class AMP {
         AMP.setAutoReconnectChannels(true);
 
         AMP.setCapEnabled(true);
-        AMP.getCapHandlers().add(new SASLCapHandler(botInfo[3], botInfo[4]));
 
         AMP.getListenerManager().addListener(new MessageData());
         AMP.getListenerManager().addListener(new PrivateMessageData());
@@ -39,10 +39,11 @@ public class AMP {
 
     private static void joinServer() {
         try {
-            AMP.connect("irc.seion.us");
+            AMP.connect("irc.esper.net");
             String[] channels = FileReader.wholeText("properties.channels");
             for (String channel : channels)
                 AMP.joinChannel(channel);
+            AMP.identify(botInfo[4]);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

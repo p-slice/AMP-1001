@@ -1,13 +1,22 @@
 package net.pslice.bot.commands;
 
-import net.pslice.bot.AMP;
 import org.pircbotx.Channel;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandInfo {
+class CommandInfo extends Command {
 
-    private static final PircBotX bot = AMP.getBot();
+    public static void setNick(User user, String[] messageSplit, int l, int p, int rank) {
+        if (p >= rank) {
+            if (l == 2) {
+                if (bot.userExists(messageSplit[1]))
+                    throwUsedNameError(user);
+                else
+                    bot.setName(messageSplit[1]);
+            } else
+                throwIncorrectParametersError(user, "+rename <nick>");
+        } else
+            throwNoRankError(user, rank, p);
+    }
 
     public static void execute(Channel chan, User user, String[] messageSplit, int l, int p, int rank) {
 
@@ -31,8 +40,8 @@ class CommandInfo {
                         break;
                 }
             } else
-                Command.throwIncorrectParametersError(user, "+info <setting>");
+                throwIncorrectParametersError(user, "+info <setting>");
         } else
-            Command.throwNoRankError(user, rank, p);
+            throwNoRankError(user, rank, p);
     }
 }

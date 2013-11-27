@@ -1,14 +1,9 @@
 package net.pslice.bot.commands;
 
-import net.pslice.bot.AMP;
-import net.pslice.bot.source.BotCommand;
 import org.pircbotx.Channel;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandSay {
-
-    private static final PircBotX bot = AMP.getBot();
+class CommandSay extends Command {
 
     public static void execute(Channel chan, User user, String[] messageSplit, int l, int p, int rank) {
 
@@ -16,18 +11,34 @@ class CommandSay {
 
         if (p >= rank) {
             if (l >= 3 && messageSplit[1].startsWith("#")) {
-                finalMessage = messageSplit[2];
-                for (int i = 3; i < messageSplit.length; i++)
-                    finalMessage += " " + messageSplit[i];
-                bot.sendMessage(messageSplit[1], finalMessage);
+                if (!bot.channelExists(messageSplit[1]))
+                    throwUnknownChannelError(user, messageSplit[1]);
+                else {
+                    boolean leaveChan = false;
+                    if (!bot.getChannelsNames().contains(messageSplit[1])) {
+                        if (bot.getChannel(messageSplit[1]).isInviteOnly())
+                            throwGenericError(user, "Error: Couldn't join channel to send message!");
+                        else {
+                            bot.joinChannel(messageSplit[1]);
+                            leaveChan = true;
+                        }
+                    } else {
+                        finalMessage = messageSplit[2];
+                        for (int i = 3; i < messageSplit.length; i++)
+                            finalMessage += " " + messageSplit[i];
+                        bot.sendMessage(messageSplit[1], finalMessage);
+                    }
+                    if (leaveChan)
+                        bot.partChannel(bot.getChannel(messageSplit[1]));
+                }
             } else if (l >= 2) {
                 finalMessage = messageSplit[1];
                 for (int i = 2; i < messageSplit.length; i++)
                     finalMessage += " " + messageSplit[i];
                 bot.sendMessage(chan, finalMessage);
             } else
-                Command.throwIncorrectParametersError(user, "+say (channel) <message>");
+                throwIncorrectParametersError(user, "+say (channel) <message>");
         } else
-            Command.throwNoRankError(user, rank, p);
+            throwNoRankError(user, rank, p);
     }
 }

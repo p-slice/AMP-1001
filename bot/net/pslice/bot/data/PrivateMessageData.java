@@ -10,7 +10,7 @@ public class PrivateMessageData extends ListenerAdapter {
 
     private static final PircBotX bot = AMP.getBot();
 
-    public void onPrivateMessage(PrivateMessageEvent event){
+    public void onPrivateMessage(PrivateMessageEvent event) {
         User user = event.getUser();
 
         bot.sendNotice(user, "I am nothing but a bot, you can't simply PM me! However, I've passed your message on to my Master, p_slice.");

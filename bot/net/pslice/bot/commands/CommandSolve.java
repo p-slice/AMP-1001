@@ -1,21 +1,17 @@
 package net.pslice.bot.commands;
 
-import net.pslice.bot.AMP;
 import net.pslice.bot.data.MessageData;
 import org.pircbotx.Channel;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-class CommandSolve {
-
-    private static final PircBotX bot = AMP.getBot();
+class CommandSolve extends Command {
 
     public static void execute(Channel chan, User user, String[] messageSplit, int p, int rank) {
-        String ops = "[-,+,*,/,^,(,), ]";
+        String ops = "[-+*/^() x]";
 
         List<String> parts = new ArrayList<>();
 
@@ -25,9 +21,11 @@ class CommandSolve {
             parts.addAll(Arrays.asList(messageSplit).subList(0, messageSplit.length - 1));
         else {
             String equation = MessageData.getMessage();
+
             if (equation.contains("(")
                     && !equation.contains(")"))
                 equation += ")";
+
             int start = 7;
             parts.add(messageSplit[0]);
             if (messageSplit[1].toLowerCase().equals("quadratic")) {
@@ -37,8 +35,10 @@ class CommandSolve {
             equationSplit = equation.substring(start).split("((?<=op)|(?=op))".replace("op", ops));
             for (int z = 0; z < equationSplit.length; z++) {
                 if (equationSplit[z].equals("-")
-                        && equationSplit[z + 1].matches("[\\d+]")) {
-                    if (z == 1) {
+                        && equationSplit[z + 1].matches("[\\d]+")) {
+                    if (equationSplit[z - 1].matches("[)]"))
+                        parts.add(equationSplit[z]);
+                    else if (z == 1) {
                         parts.add("-" + equationSplit[z + 1]);
                         z++;
                     } else if (equationSplit[z - 1].matches(ops)) {
@@ -62,7 +62,6 @@ class CommandSolve {
 
         if (p >= rank) {
             if (l == 11 && equationSplit[1].toLowerCase().equals("quadratic")) {
-
                 if (!equationSplit[2].equals("0")
                         && equationSplit[3].equals("x")
                         && equationSplit[4].equals("^")
@@ -75,18 +74,21 @@ class CommandSolve {
                 } else
                     bot.sendMessage(chan, "Error: equation is not quadratic!");
             } else if (l >= 4 && !equationSplit[1].toLowerCase().equals("quadratic")) {
-                for (int i = 0; i < equationSplit.length; i++) {
+                String eq = "";
+                for (int i = 1; i < equationSplit.length; i++) {
+                    eq += equationSplit[i] + " ";
                     if (equationSplit[i].equals("/") && equationSplit[i + 1].matches("[-?0]+")) {
                         bot.sendMessage(chan, "Error: equation contains division by 0!");
                         return;
                     }
                 }
                 String result = solveFullEquation(equationSplit);
+                bot.sendMessage(chan, "Interpreted equation as: " + eq);
                 bot.sendMessage(chan, result);
             } else
-                Command.throwIncorrectParametersError(user, "+solve (quadratic) <equation> (+s)");
+                throwIncorrectParametersError(user, "+solve (quadratic) <equation> (+s)");
         } else
-            Command.throwNoRankError(user, rank, p);
+            throwNoRankError(user, rank, p);
     }
 
     private static String solveFullEquation(String[] equation) {
@@ -126,7 +128,8 @@ class CommandSolve {
 
                 i = f;
             }
-            if (equation[i].matches("[+,\\-,*,/,^]+"))
+            if (equation[i].matches("[-+*/^]+")
+                    && !equation[i - 1].matches("[-+*/^]+"))
                 opList.add(equation[i]);
             else if (equation[i].matches("-?\\d+"))
                 numList.add(Double.parseDouble(equation[i]));
@@ -134,7 +137,13 @@ class CommandSolve {
                 return "Error: cannot currently work with variables!";
         }
 
-        double result = getResult(numList, opList);
+        String result = String.valueOf(getResult(numList, opList)).replaceAll("\\.0\\b", "");
+
+        if (result.contains(".")) {
+            String[] resSplit = result.split("[.]");
+            if (resSplit[1].length() > 6)
+                result = resSplit[0] + "." + resSplit[1].substring(0, 6);
+        }
 
         return "Result: " + String.valueOf(result).replaceAll("\\.0\\b", "");
     }
@@ -164,10 +173,16 @@ class CommandSolve {
             String res1 = String.valueOf(result1).replaceAll("\\.0\\b", "");
             String res2 = String.valueOf(result2).replaceAll("\\.0\\b", "");
 
-            if (res1.split("").length >= 6)
-                res1 = res1.substring(0, 6);
-            if (res2.split("").length >= 6)
-                res2 = res2.substring(0, 6);
+            if (res1.contains(".")) {
+                String[] resSplit1 = res1.split(".");
+                if (resSplit1[1].length() > 6)
+                    res1 = resSplit1[0] + "." + resSplit1[1].substring(0, 6);
+            }
+            if (res2.contains(".")) {
+                String[] resSplit2 = res2.split(".");
+                if (resSplit2[1].length() > 6)
+                    res1 = resSplit2[0] + "." + resSplit2[1].substring(0, 6);
+            }
 
             if (res1.equals(res2))
                 result = String.format("Result: x = {%s}", res1);

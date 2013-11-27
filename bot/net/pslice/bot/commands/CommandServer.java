@@ -1,18 +1,13 @@
 package net.pslice.bot.commands;
 
-import net.pslice.bot.AMP;
-import net.pslice.bot.source.BotCommand;
 import org.pircbotx.Channel;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-class CommandServer {
-
-    private static final PircBotX bot = AMP.getBot();
+class CommandServer extends Command {
 
     public static void execute(Channel chan, User user, String[] messageSplit, int l, int p, int rank) {
         String server = messageSplit[2];
@@ -43,12 +38,12 @@ class CommandServer {
                         }
                         break;
                     default:
-                        Command.throwUnknownSettingError(user, "+server", messageSplit[1]);
+                        throwUnknownSettingError(user, "+server", messageSplit[1]);
                         break;
                 }
             } else
-                Command.throwIncorrectParametersError(user, "+server IP <server>");
+                throwIncorrectParametersError(user, "+server IP <server>");
         } else
-            Command.throwNoRankError(user, rank, p);
+            throwNoRankError(user, rank, p);
     }
 }

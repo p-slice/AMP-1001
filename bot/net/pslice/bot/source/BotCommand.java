@@ -23,7 +23,7 @@ public class BotCommand {
         return stringList.toArray(new String[stringList.size()]);
     }
 
-    public static void setCommandRank(String command, String newRank){
+    public static void setCommandRank(String command, String newRank) {
         String[] commands = FileReader.wholeText("properties.commandsettings");
         for (String command1 : commands) {
             if (command1.startsWith(command)) {
@@ -47,11 +47,11 @@ public class BotCommand {
         }
     }
 
-    public static String getCommandRank(String command){
+    public static String getCommandRank(String command) {
         String[] commands = FileReader.wholeText("properties.commandsettings");
         String rank = "0";
-        for (String command1 : commands){
-            if (command1.startsWith(command)){
+        for (String command1 : commands) {
+            if (command1.startsWith(command)) {
                 rank = command1.split("[ ]")[1];
                 break;
             }
