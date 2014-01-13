@@ -1,28 +1,22 @@
 package net.pslice.bot.commands;
 
+import net.pslice.bot.managers.CommandManager;
+import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandJoin extends Command {
+public final class CommandJoin implements Command {
 
-    public static void execute(User user, String[] messageSplit, int l, int p, int rank) {
-
-        if (p >= rank) {
-            if (l == 2)
-                if (messageSplit[1].startsWith("#")) {
-                    bot.sendNotice(user, "Attempting to join " + messageSplit[1]);
-                    if (!bot.channelExists(messageSplit[1]))
-                        throwUnknownChannelError(user, messageSplit[1]);
-                    else if (bot.getChannel(messageSplit[1]).isInviteOnly())
-                        throwGenericError(user, "Error: Channel is invite only!");
-                    if (bot.getChannelsNames().contains(messageSplit[1]))
-                        throwGenericError(user, "Error: Already in channel!");
-                    else
-                        bot.joinChannel(messageSplit[1]);
-                } else
-                    throwUnknownChannelError(user, messageSplit[1]);
+    public void execute(PircBotX bot, Channel channel, User sender, String command, String... args)
+    {
+        if (args.length == 1)
+        {
+            if (args[0].startsWith("#"))
+                bot.joinChannel(args[0]);
             else
-                throwIncorrectParametersError(user, "+join <channel>");
-        } else
-            throwNoRankError(user, rank, p);
+                CommandManager.throwUnknownChannelError(bot, sender, args[0]);
+        }
+        else
+            CommandManager.throwIncorrectParametersError(bot, sender, command);
     }
 }

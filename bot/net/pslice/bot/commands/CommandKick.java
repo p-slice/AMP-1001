@@ -1,26 +1,40 @@
 package net.pslice.bot.commands;
 
+import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandKick extends Command {
+public final class CommandKick implements Command {
 
-    public static void execute(Channel chan, User user, String[] messageSplit, int l, int p, int rank) {
+    public void execute(PircBotX bot, Channel channel, User sender, String command, String... args)
+    {
+        if (channel.isOp(bot.getUserBot()))
+        {
+            if (args.length == 1)
+            {
+                if (bot.getUser(args[0]).getChannels().contains(channel))
+                    bot.kick(channel, bot.getUser(args[0]), "Kicked from channel");
+                else
+                    CommandManager.throwGenericError(bot, sender, String.format("Error: The user '%s' is not in this channel!", args[0]));
+            }
+            else if (args.length > 1)
+            {
+                if (bot.getUser(args[0]).getChannels().contains(channel))
+                {
+                    String reason = args[1];
+                    for (int i = 2; i < args.length; i++)
+                        reason += " " + args[i];
+                    bot.kick(channel, bot.getUser(args[0]), reason);
+                }
+                else
+                    CommandManager.throwGenericError(bot, sender, String.format("Error: The user '%s' is not in this channel!", args[0]));
+            }
+            else
+                CommandManager.throwIncorrectParametersError(bot, sender, command);
+        }
+        else
+            bot.sendMessage(channel, "I would if I could but I can't so I won't.");
 
-        if (p >= rank) {
-            if (chan.isOp(bot.getUserBot())) {
-                if (l == 2)
-                    bot.kick(chan, bot.getUser(messageSplit[1]), "Kicked from channel.");
-                else if (l > 2) {
-                    String reason = messageSplit[2];
-                    for (int i = 3; i < messageSplit.length; i++)
-                        reason = reason + " " + messageSplit[i];
-                    bot.kick(chan, bot.getUser(messageSplit[1]), reason);
-                } else
-                    throwIncorrectParametersError(user, "+kick <user> (reason)");
-            } else
-                throwGenericError(user, "Error: I don't have sufficient permissions to do that!");
-        } else
-            throwNoRankError(user, rank, p);
     }
 }

@@ -1,21 +1,19 @@
 package net.pslice.bot.commands;
 
+import net.pslice.bot.AmpBot;
 import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public final class CommandVerbose implements Command {
+public final class CommandReload implements Command {
 
     public void execute(PircBotX bot, Channel channel, User sender, String command, String... args)
     {
         if (args.length == 0)
         {
-            bot.setVerbose(!bot.isVerbose());
-            if (bot.isVerbose())
-                bot.sendMessage(channel, "Verbose now turned on.");
-            else
-                bot.sendMessage(channel, "Verbose now turned off.");
+            AmpBot.loadFiles();
+            bot.sendMessage(channel, "All files reloaded!");
         }
         else
             CommandManager.throwIncorrectParametersError(bot, sender, command);

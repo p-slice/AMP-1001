@@ -1,17 +1,17 @@
 package net.pslice.bot.commands;
 
+import net.pslice.bot.managers.CommandManager;
+import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandQuit extends Command {
+public final class CommandQuit implements Command{
 
-    public static void execute(User user, int l, int p, int rank) {
-
-        if (p >= rank) {
-            if (l == 1)
-                bot.quitServer("Disconnecting");
-            else
-                throwIncorrectParametersError(user, "+quit");
-        } else
-            throwNoRankError(user, rank, p);
+    public void execute(PircBotX bot, Channel channel, User sender, String command, String... args)
+    {
+        if (args.length == 0)
+            bot.quitServer(String.format("Disconnect command by user '%s'", sender.getNick()));
+        else
+            CommandManager.throwIncorrectParametersError(bot, sender, command);
     }
 }

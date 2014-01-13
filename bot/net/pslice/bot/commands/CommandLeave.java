@@ -1,33 +1,24 @@
 package net.pslice.bot.commands;
 
+import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
+import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-class CommandLeave extends Command {
+public final class CommandLeave implements Command {
 
-    public static void execute(Channel chan, User user, String[] messageSplit, int l, int p, int rank) {
-
-        if (p >= rank) {
-            if (l == 1) {
-                if (chan.getName().equals("#p_slice"))
-                    bot.sendNotice(user, "No, I refuse to.");
-                else
-                    bot.partChannel(chan);
-            } else if (l == 2) {
-                if (messageSplit[1].equals("#p_slice"))
-                    bot.sendNotice(user, "No, I refuse to.");
-                else if (messageSplit[1].startsWith("#")) {
-                    if (!bot.channelExists(messageSplit[1]))
-                        throwUnknownChannelError(user, messageSplit[1]);
-                    else if (!bot.getChannelsNames().contains(messageSplit[1]))
-                        throwGenericError(user, "Error: Not already in channel!");
-                    else
-                        bot.partChannel(bot.getChannel(messageSplit[1]));
-                } else
-                    throwUnknownChannelError(user, messageSplit[1]);
-            } else
-                throwIncorrectParametersError(user, "+leave (channel)");
-        } else
-            throwNoRankError(user, rank, p);
+    public void execute(PircBotX bot, Channel channel, User sender, String command, String... args)
+    {
+        if (args.length == 0)
+            bot.partChannel(channel, String.format("Leave command by '%s'", sender.getNick()));
+        else if (args.length == 1)
+        {
+            if (args[0].startsWith("#"))
+                bot.partChannel(bot.getChannel(args[0]), String.format("Leave command by '%s'", sender.getNick()));
+            else
+                CommandManager.throwUnknownChannelError(bot, sender, args[0]);
+        }
+        else
+            CommandManager.throwIncorrectParametersError(bot, sender, command);
     }
 }

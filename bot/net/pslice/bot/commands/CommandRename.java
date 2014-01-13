@@ -5,17 +5,13 @@ import org.pircbotx.Channel;
 import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
-public final class CommandVerbose implements Command {
+public final class CommandRename implements Command {
 
     public void execute(PircBotX bot, Channel channel, User sender, String command, String... args)
     {
-        if (args.length == 0)
+        if (args.length == 1)
         {
-            bot.setVerbose(!bot.isVerbose());
-            if (bot.isVerbose())
-                bot.sendMessage(channel, "Verbose now turned on.");
-            else
-                bot.sendMessage(channel, "Verbose now turned off.");
+            bot.changeNick(args[0]);
         }
         else
             CommandManager.throwIncorrectParametersError(bot, sender, command);
