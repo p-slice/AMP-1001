@@ -18,7 +18,7 @@ General Commands:
     - If no command is specified, a list of all possible commands is given.
 - say (channel) \<message>: Command to send a message to a channel.
     - If no channel is specified, the message is sent to the channel the command was run in.
-- link <name> (new link): Command to display a link to a saved website.
+- link \<name> (new link): Command to display a link to a saved website.
     - To save a new link, put the URL after the name of the link.
 - user \<name>: Command to view info about a user.
 - rename \<name>: Command to change the name of the bot.
