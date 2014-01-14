@@ -12,21 +12,21 @@ General Commands:
 - join <#channel>: Command to join a channel.
 - leave (#channel): Command to leave a channel. 
     - If no channel is specified, leaves channel the command was run in.
-- kick <user> (reason): Command to kick a user from the channel.
+- kick \<user> (reason): Command to kick a user from the channel.
     - If no reason is specified, the message is "Kicked from channel".
 - help (command): Command to display info about a command.
     - If no command is specified, a list of all possible commands is given.
-- say (channel) <message>: Command to send a message to a channel.
+- say (channel) \<message>: Command to send a message to a channel.
     - If no channel is specified, the message is sent to the channel the command was run in.
 - link <name> (new link): Command to display a link to a saved website.
     - To save a new link, put the URL after the name of the link.
-- user <name>: Command to view info about a user.
-- rename <name>: Command to change the name of the bot.
+- user \<name>: Command to view info about a user.
+- rename \<name>: Command to change the name of the bot.
 
 Administrative Commands:
-- setcommand <setting> <command> <value>: Command to change a setting of a command.
-- setuser <setting> <user> <value>: Command to change a setting of a user.
-- setproperty <property> <value>: Command to change the default properties the bot loads with.
+- setcommand \<setting> \<command> \<value>: Command to change a setting of a command.
+- setuser \<setting> \<user> \<value>: Command to change a setting of a user.
+- setproperty \<property> \<value>: Command to change the default properties the bot loads with.
 - reload: Command to reload all files.
 - verbose: Command to toggle if the bot sends raw info to the console
 - toggleinputmethod*: Command to toggle how ranks are assigned.
