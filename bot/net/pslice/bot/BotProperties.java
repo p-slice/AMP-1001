@@ -66,6 +66,7 @@ public final class BotProperties {
         classes.put("setproperty", CommandProperties.class);
         classes.put("reload", CommandReload.class);
         classes.put("identify", CommandIdentify.class);
+        classes.put("link", CommandLink.class);
 
         return classes;
     }
@@ -82,9 +83,9 @@ public final class BotProperties {
 
         ranks.put("help", 0);
         ranks.put("quit", 10);
-        ranks.put("join", 10);
-        ranks.put("leave", 10);
-        ranks.put("say", 10);
+        ranks.put("join", 7);
+        ranks.put("leave", 7);
+        ranks.put("say", 8);
         ranks.put("setcommand", 10);
         ranks.put("setuser", 10);
         ranks.put("kick", 10);
@@ -96,6 +97,7 @@ public final class BotProperties {
         ranks.put("setproperty", 10);
         ranks.put("reload", 7);
         ranks.put("identify", 7);
+        ranks.put("link", 5);
 
         return ranks;
     }
@@ -128,6 +130,7 @@ public final class BotProperties {
         parameters.put("setproperty", PREFIX + "setproperty <property> <value>");
         parameters.put("reload", PREFIX + "reload");
         parameters.put("identify", PREFIX + "identify");
+        parameters.put("link", PREFIX + "link <name> (new link)");
 
         return parameters;
     }
@@ -158,6 +161,7 @@ public final class BotProperties {
         descriptions.put("setproperty", "Set a property of the bot");
         descriptions.put("reload", "Reload all bot files");
         descriptions.put("identify", "Log in with NickServ");
+        descriptions.put("link", "Save and load links to websites");
 
         return descriptions;
     }

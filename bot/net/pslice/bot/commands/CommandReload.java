@@ -12,7 +12,7 @@ public final class CommandReload implements Command {
     {
         if (args.length == 0)
         {
-            AmpBot.loadFiles();
+            AmpBot.loadAllFiles();
             bot.sendMessage(channel, "All files reloaded!");
         }
         else

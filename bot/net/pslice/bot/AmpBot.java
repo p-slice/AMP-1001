@@ -1,5 +1,6 @@
 package net.pslice.bot;
 
+import net.pslice.bot.commands.CommandLink;
 import net.pslice.bot.listeners.MessageData;
 import net.pslice.bot.listeners.PrivateMessageData;
 import net.pslice.bot.managers.CommandManager;
@@ -43,7 +44,7 @@ public final class AmpBot extends PircBotX {
     {
         try
         {
-            loadFiles();
+            loadAllFiles();
 
             bot = new PircBotX();
 
@@ -143,7 +144,7 @@ public final class AmpBot extends PircBotX {
     * ===========================================
      */
 
-    public static void loadFiles()
+    public static void loadAllFiles()
     {
         try
         {
@@ -163,6 +164,7 @@ public final class AmpBot extends PircBotX {
 
             CommandManager.loadFiles();
             UserManager.loadFiles();
+            CommandLink.loadFiles();
 
             if (UserManager.getRank(properties.getProperty("master")) < 10)
                 UserManager.setRank(properties.getProperty("master"), 10);
