@@ -60,7 +60,7 @@ public final class BotProperties {
         // Server to connect to upon startup
         defaultProperties.put("server", "irc.esper.net");
 
-        // Chanel to connect to upon startup
+        // Channels to connect to upon startup
         defaultProperties.put("channels", "#p_slice");
 
         // Should the bot identify upon startup?
@@ -190,7 +190,7 @@ public final class BotProperties {
         // Listed in alphabetical order:
 
         parameters.put("action", "action (#channel) <activity>");
-        parameters.put("alert", "alert <name>");
+        parameters.put("alert", "alert <event>");
         parameters.put("help", "help (command)");
         parameters.put("identify", "identify");
         parameters.put("join", "join <#channel>");
