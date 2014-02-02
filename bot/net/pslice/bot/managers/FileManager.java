@@ -5,23 +5,50 @@ import java.io.*;
 public final class FileManager {
 
     /*
-    * ===========================================
-    * ...
-    * ===========================================
+     * ===========================================
+     * Variables, Objects, Lists, Sets and Maps:
+     * ===========================================
      */
 
-    private FileManager(){}
+    private final String
 
-    /*
-    * ===========================================
-    * ...
-    * ===========================================
+            // The main directory to where bot-related files are saved
+            directory;
+
+
+
+
+
+    /**
+     * ===========================================
+     * Initializer:
+     *
+     * @param directory: The path to where bot-related files are saved
+     * ===========================================
      */
 
-    public static <O> void save(O object, String path)
+    public FileManager(String directory)
+    {
+        this.directory = directory;
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Method to save a file:
+     *
+     * @param object: The object being saved
+     * @param name: The name of the file
+     * ===========================================
+     */
+
+    public <O> void save(O object, String name)
     {
         try {
-            ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(String.format("Files/%s.bin",  path)));
+            ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(String.format("%s/%s.bin", directory, name)));
             output.writeObject(object);
             output.close();
         } catch (Exception e) {
@@ -29,30 +56,53 @@ public final class FileManager {
         }
     }
 
+
+
+
+
+    /**
+     * ===========================================
+     * Method to load a file:
+     *
+     * @param name: The name of the file
+     * @return The contents of the file
+     * The method performs an unchecked cast to the loaded
+     *      object.
+     * ===========================================
+     */
+
     @SuppressWarnings("unchecked")
-    public static <O> O load(String path)
+    public <O> O load(String name)
     {
         try {
-            ObjectInputStream input = new ObjectInputStream(new FileInputStream(String.format("Files/%s.bin", path)));
+            ObjectInputStream input = new ObjectInputStream(new FileInputStream(String.format("%s/%s.bin", directory, name)));
             O result = (O)input.readObject();
             input.close();
             return result;
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
 
-    /*
-    * ===========================================
-    * ...
-    * ===========================================
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for the existence of a file:
+     *
+     * @param name: The name of the file being checked
+     * @return Whether or not the file exists
+     * ===========================================
      */
 
-    public static boolean fileExists(String path)
+    public boolean fileExists(String name)
     {
-        File file = new File(String.format("Files/%s.bin", path));
-        return file.exists();
+        return new File(String.format("%s/%s.bin", directory, name)).exists();
     }
 
 }

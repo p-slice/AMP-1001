@@ -3,19 +3,18 @@ package net.pslice.bot.commands;
 import net.pslice.bot.AmpBot;
 import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
-import org.pircbotx.PircBotX;
 import org.pircbotx.User;
 
 public final class CommandOverride implements Command {
 
-    public void execute(PircBotX bot, Channel channel, User sender, String command, String... args)
+    public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
     {
-        if (sender.getNick().equals(AmpBot.getProperty("master")))
+        if (sender.getNick().equals(bot.getPropertiesManager().getProperty("master")))
         {
             if (args.length == 0)
             {
-                AmpBot.toggleOverride();
-                if (AmpBot.isOverride())
+                bot.toggleOverride();
+                if (bot.isOverride())
                     bot.sendMessage(channel, "Now in override mode. All commands from non-bot operators will be ignored.");
                 else
                     bot.sendMessage(channel, "Override mode now disabled.");

@@ -1,175 +1,247 @@
 package net.pslice.bot;
 
-import net.pslice.bot.commands.CommandLink;
+import net.pslice.bot.listeners.ChannelData;
 import net.pslice.bot.listeners.MessageData;
-import net.pslice.bot.listeners.PrivateMessageData;
+import net.pslice.bot.listeners.ServerData;
 import net.pslice.bot.managers.CommandManager;
+import net.pslice.bot.managers.FileManager;
+import net.pslice.bot.managers.PropertiesManager;
 import net.pslice.bot.managers.UserManager;
 import org.pircbotx.PircBotX;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.util.Properties;
-
 public final class AmpBot extends PircBotX {
+
+    /*
+     * ===========================================
+     * Main static method:
+     * ===========================================
+     */
 
     public static void main(String[] args)
     {
-        AmpBot.run();
+        AmpBot ampBot = new AmpBot();
+        ampBot.run();
     }
 
-    /*
-    * ===========================================
-    * Variables, Objects, Lists, Sets and Maps:
-    * ===========================================
-     */
 
-    // The main PircBotX used
-    private static PircBotX bot;
 
-    // The main properties used by the bot
-    private static Properties properties;
 
-    // Booleans concerning the way input is registered
-    private static boolean override, inputType;
 
     /*
-    * ===========================================
-    * Method to run the bot:
-    * ===========================================
+     * ===========================================
+     * Variables, Objects, Lists, Sets and Maps:
+     * ===========================================
      */
 
-    public static void run()
+    private boolean
+
+            // Whether or not the bot is in override mode
+            override,
+
+            // Whether or not the bot uses pre-defined ranks
+            useChannelRanks;
+
+    private final FileManager
+
+            // Manager used for saving/loading files
+            fileManager = new FileManager("Files");
+
+    private final PropertiesManager
+
+            // Manager used for all bot properties
+            propertiesManager = new PropertiesManager(fileManager);
+
+    private final CommandManager
+
+            // Manager used for all bot commands
+            commandManager = new CommandManager(fileManager);
+
+    private final UserManager
+
+            // Manager used for all bot users
+            userManager = new UserManager(fileManager);
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getters for various bot managers:
+     *
+     * @return fileManager
+     *         propertiesManager
+     *         commandManager
+     *         userManager
+     * ===========================================
+     */
+
+    public FileManager getFileManager()
+    {
+        return fileManager;
+    }
+
+    public PropertiesManager getPropertiesManager()
+    {
+        return propertiesManager;
+    }
+
+    public CommandManager getCommandManager()
+    {
+        return commandManager;
+    }
+
+    public UserManager getUserManager()
+    {
+        return userManager;
+    }
+
+
+
+
+
+    /*
+     * ===========================================
+     * Method to run the bot:
+     * ===========================================
+     */
+
+    public void run()
     {
         try
         {
+            // Make sure all the files needed to initialize the bot are ready
             loadAllFiles();
 
-            bot = new PircBotX();
+            // Set the nick of the bot
+            this.setName(propertiesManager.getProperty("nick"));
+            // Set the login of the bot
+            this.setLogin(propertiesManager.getProperty("login"));
+            // Set the real name/version of the bot
+            this.setVersion(propertiesManager.getProperty("realname"));
+            // Set whether or not the bot prints logs to console
+            this.setVerbose(propertiesManager.getProperty("verbose").equals("true"));
+            // Set whether or not the bot will try rename upon joining if its name it taken
+            this.setAutoNickChange(propertiesManager.getProperty("changenick").equals("true"));
+            // Set whether or not the bot will try identify with NickServ upon joining
+            this.setCapEnabled(propertiesManager.getProperty("identify").equals("true"));
 
-            bot.setName(properties.getProperty("nick"));
-            bot.setLogin(properties.getProperty("login"));
-            bot.setVersion(properties.getProperty("realname"));
-            bot.setVerbose(properties.getProperty("verbose").equals("true"));
-            bot.setAutoNickChange(properties.getProperty("changenick").equals("true"));
-            bot.setCapEnabled(properties.getProperty("identify").equals("true"));
+            // Add Listeners to the bot
+            this.getListenerManager().addListener(new MessageData());
+            this.getListenerManager().addListener(new ChannelData());
+            this.getListenerManager().addListener(new ServerData());
 
-            bot.getListenerManager().addListener(new MessageData());
-            bot.getListenerManager().addListener(new PrivateMessageData());
+            // Connect to the server
+            this.connect(propertiesManager.getProperty("server"));
 
-            bot.connect(properties.getProperty("server"));
-            bot.joinChannel(properties.getProperty("channel"));
-            if (bot.isCapEnabled())
-                bot.identify(properties.getProperty("nickservPASS"));
+            // Join any channels
+            for (String channel : propertiesManager.getProperty("channels").split(" "))
+                this.joinChannel(channel);
+
+            // Identify if instructed to
+            if (this.isCapEnabled())
+                this.identify(propertiesManager.getProperty("nickservPASS"));
         }
+
         catch (Exception e)
         {
             e.printStackTrace();
         }
     }
 
-    /*
-    * ===========================================
-    * ...
-    * ===========================================
-     */
 
-    public static boolean isProperty(String setting)
-    {
-        return properties.containsKey(setting);
-    }
 
-    public static void setProperty(String setting, String value)
-    {
-        properties.setProperty(setting, value);
-        saveProperties();
-    }
 
-    public static String getProperty(String setting)
-    {
-        if (properties.containsKey(setting))
-            return properties.getProperty(setting);
-        return null;
-    }
-
-    private static void saveProperties()
-    {
-        try
-        {
-            FileOutputStream output = new FileOutputStream("Files/BotInfo.properties");
-            properties.store(output, "");
-            output.close();
-        }
-        catch (Exception e)
-        {
-            e.printStackTrace();
-        }
-    }
 
     /*
-    * ===========================================
-    * ...
-    * ===========================================
+     * ===========================================
+     * Method to toggle the state of override:
+     * ===========================================
      */
 
-    public static PircBotX getBot()
-    {
-        return bot;
-    }
-
-    public static void toggleOverride()
+    public void toggleOverride()
     {
         override = !override;
     }
 
-    public static boolean isOverride()
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for the state of override:
+     *
+     * @return The state of override
+     * ===========================================
+     */
+
+    public boolean isOverride()
     {
         return override;
     }
 
-    public static void toggleInput()
-    {
-        inputType = !inputType;
-    }
 
-    public static boolean getInputType()
-    {
-        return inputType;
-    }
+
+
 
     /*
-    * ===========================================
-    * ...
-    * ===========================================
+     * ===========================================
+     * Method to toggle the use of channel ranks:
+     * ===========================================
      */
 
-    public static void loadAllFiles()
+    public void toggleRankInput()
+    {
+        useChannelRanks = !useChannelRanks;
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for the state of using channel ranks:
+     *
+     * @return The state of useChannelRanks
+     * ===========================================
+     */
+
+    public boolean usesChannelRanks()
+    {
+        return useChannelRanks;
+    }
+
+
+
+
+
+    /*
+     * ===========================================
+     * Method to ensure all files are loaded:
+     * ===========================================
+     */
+
+    public void loadAllFiles()
     {
         try
         {
+            // Set boolean states to default
             override = false;
-            inputType = false;
+            useChannelRanks = false;
 
-            if (!new File("Files/BotInfo.properties").exists())
-            {
-                FileOutputStream output = new FileOutputStream("Files/BotInfo.properties");
-                BotProperties.defaultProperties().store(output, "");
-            }
+            // Load files in individual managers
+            propertiesManager.loadFiles();
+            commandManager.loadFiles();
+            userManager.loadFiles();
 
-            properties = new Properties(BotProperties.defaultProperties());
-            FileInputStream input = new FileInputStream("Files/BotInfo.properties");
-            properties.load(input);
-            input.close();
-
-            CommandManager.loadFiles();
-            UserManager.loadFiles();
-            CommandLink.loadFiles();
-
-            if (UserManager.getRank(properties.getProperty("master")) < 10)
-                UserManager.setRank(properties.getProperty("master"), 10);
+            // Ensure the bot Master has rank 10
+            if (userManager.getRank(propertiesManager.getProperty("master")) < 10)
+                userManager.setRank(propertiesManager.getProperty("master"), 10);
 
         }
+
         catch (Exception e)
         {
             e.printStackTrace();
