@@ -7,8 +7,26 @@ import org.pircbotx.User;
 
 public final class CommandSay implements Command {
 
+    /**
+     * ===========================================
+     * Command execution method:
+     *
+     * @param bot: The bot the command was sent to
+     * @param channel: The channel the command was sent in
+     * @param sender: The user the command was sent by
+     * @param command: The name of the command
+     * @param args: The arguments sent with the command
+     * This command will make the bot attempt to send
+     *     a message to a channel, either the channel the
+     *     command was sent in or one specified by the
+     *     sender. If the bot is not in the channel, it
+     *     will join, say the message, then leave again
+     * ===========================================
+     */
+
     public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
     {
+        // If the first word starts with '#', the bot will attempt to send the message to that channel
         if (args.length > 1
                 && args[0].startsWith("#"))
         {
@@ -18,17 +36,22 @@ public final class CommandSay implements Command {
 
             boolean inChannel = false;
 
+            // Check if the bot is in the channel already
             if (bot.getChannel(args[0]).getUsers().contains(bot.getUserBot()))
                 inChannel = true;
 
+            // If the bot isn't in the channel, join it
             if (!inChannel)
                 bot.joinChannel(args[0]);
 
             bot.sendMessage(args[0], message);
 
+            // If the bot wasn't in the channel, leave it
             if (!inChannel)
                 bot.partChannel(bot.getChannel(args[0]));
         }
+
+        // Otherwise the message is sent in the original channel
         else if (args.length > 0)
         {
             String message = args[0];
@@ -36,6 +59,8 @@ public final class CommandSay implements Command {
                 message += " " + args[i];
             bot.sendMessage(channel, message);
         }
+
+        // Throw an error if the parameters are incorrect
         else
             CommandManager.throwIncorrectParametersError(bot, sender, command);
     }

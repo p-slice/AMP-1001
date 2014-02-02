@@ -7,20 +7,43 @@ import org.pircbotx.User;
 
 public final class CommandHelp implements Command {
 
+    /**
+     * ===========================================
+     * Command execution method:
+     *
+     * @param bot: The bot the command was sent to
+     * @param channel: The channel the command was sent in
+     * @param sender: The user the command was sent by
+     * @param command: The name of the command
+     * @param args: Any arguments that were sent with the command
+     * This command will send information about a command to
+     *     the sender. If no command is specified, a list of
+     *     possible commands is returned
+     * ===========================================
+     */
+
     public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
     {
         CommandManager commandManager = bot.getCommandManager();
 
+        // No args - send list of all commands
         if (args.length == 0)
         {
             bot.sendNotice(sender, "List of Commands:");
             bot.sendNotice(sender, "(Use \u00034+help <command>\u00031 for specific command help)");
+
+            // Send info for each command. To reduce spam, only commands within 5 ranks of the user's are sent
             for (String helpCommand : commandManager.getCommands())
-                bot.sendNotice(sender, String.format("\u0002%s\u000F: %s", helpCommand, commandManager.getDescription(helpCommand)));
+                if (bot.getUserManager().getRank(sender.getNick()) < commandManager.getRank(command) + 5)
+                    bot.sendNotice(sender, String.format("\u0002%s\u000F: %s", helpCommand, commandManager.getDescription(helpCommand)));
         }
+
+        // One arg - attempt to get info about a specific command
         else if (args.length == 1)
         {
             String helpCommand = args[0].toLowerCase();
+
+            // Check if the command exists
             if (commandManager.isCommand(helpCommand))
             {
                 bot.sendNotice(sender, String.format("Help for command '\u00034%s\u00031':", helpCommand));
@@ -29,9 +52,13 @@ public final class CommandHelp implements Command {
                 bot.sendNotice(sender, String.format("\u0002Usage\u000F: %s", commandManager.getDescription(helpCommand)));
 
             }
+
+            // Throw an error if it doesn't
             else
                 CommandManager.throwUnknownCommandError(bot, sender, helpCommand);
         }
+
+        // Throw an error if the parameters are incorrect
         else
             CommandManager.throwIncorrectParametersError(bot, sender, command);
     }

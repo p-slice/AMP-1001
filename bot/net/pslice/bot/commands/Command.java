@@ -16,9 +16,8 @@ public interface Command {
      * @param command: The name of the command
      * @param args: Any arguments that were sent with the command
      * The execution process is controlled by each command class
-     *     individually. The current notes in the separate classes
-     *     are scarce, but they should soon be updated with their
-     *     own info
+     *     individually. View those classes for info about
+     *     each command
      * ===========================================
      */
 
