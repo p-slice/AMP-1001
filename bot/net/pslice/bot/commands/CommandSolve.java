@@ -6,12 +6,14 @@ import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 public final class CommandSolve implements Command {
 
     // The current known operations
-    private final static String ops = "[-+*/^]";
+    private final static String ops = "[-+*/^()!]";
 
     /**
      * ===========================================
@@ -34,81 +36,142 @@ public final class CommandSolve implements Command {
         // Make sure there is something to solve
         if (args.length > 0)
         {
-            List<Double> numbers = new ArrayList<>();
-            List<String> operations = new ArrayList<>();
-
             String fullEquation = "";
             for (String arg : args)
                 fullEquation += arg;
 
-            String[] equationSplit = fullEquation.split("((?<=op)|(?=op))".replace("op", ops));
+            List<String> result = new LinkedList<>(Arrays.asList(fullEquation.split("((?<=op)|(?=op))".replace("op", ops))));
+            if (result.get(0).equals(" ") || result.get(0).equals(""))
+                result.remove(0);
 
-            // Split the equation into numbers and operations
-            for (int z = 0; z < equationSplit.length; z++)
+            List<Double> numbers = new ArrayList<>();
+            List<String> operations = new ArrayList<>();
+
+            int b, f, s;
+
+            // It may be weird, but the program starts by looking backwards through the equation
+            for (b = result.size() - 1; b >= 0; b--)
             {
-                // Look for '-' signs - could be either 'minus' or 'negative'
-                if (equationSplit[z].equals("-")
-                        && equationSplit[z + 1].matches("\\d+"))
+                numbers.clear();
+                operations.clear();
+
+                // Begin solving if the item is a bracket, or the end is reached
+                if (result.get(b).equals("(")
+                        || b == 0)
                 {
-                    // If it is the first item or the previous item is an operation, assume 'negative'
-                    if (z == 1 || equationSplit[z - 1].matches(ops))
+                    for (f = b; f < result.size(); f++)
                     {
-                        numbers.add(Double.parseDouble("-" + equationSplit[z + 1]));
-                        z++;
+
+                        // If a bracketed section is being worked on, end when it hits the closer
+                        if (result.get(b).equals("(")
+                                && result.get(f).equals(")"))
+                        {
+                            result.remove(f);
+                            break;
+                        }
+
+                        // Look for factorials - replace them with an regular number
+                        if (f < result.size() - 1
+                                && result.get(f).matches("\\d+(\\.0)?")
+                                && result.get(f + 1).equals("!"))
+                        {
+                            int i = Integer.parseInt(result.get(f).replaceAll("\\.0\\b", ""));
+                            int r = 1;
+                            while (i > 0)
+                            {
+                                r *= i;
+                                i--;
+                            }
+                            result.set(f, String.valueOf(r));
+                            result.remove(f + 1);
+                        }
+
+                        // If a factorial isn't working on a number, it's in the wrong place
+                        if (result.get(f).equals("!"))
+                        {
+                            CommandManager.throwGenericError(bot, sender, "Error: Misplaced factorial!");
+                            return;
+                        }
+
+                        // Look for '-' signs - could be either 'minus' or 'negative'
+                        if (result.get(f).equals("-")
+                                && result.get(f + 1).matches("\\d*\\.?\\d*E?(-?\\d)*"))
+                        {
+                            // If it is the first item or the previous item is an operation, assume 'negative'
+                            if (f == b || result.get(f - 1).matches(ops))
+                            {
+                                numbers.add(Double.parseDouble("-" + result.get(f + 1)));
+                                f++;
+                            }
+
+                            // Otherwise it's probably 'minus'
+                            else
+                                operations.add("-");
+                        }
+
+                        // If the item is a number, add it
+                        else if (result.get(f).matches("(-?\\d)*\\.?\\d*E?(-?\\d)*"))
+                            numbers.add(Double.parseDouble(result.get(f)));
+
+                            // If the item is an operator, add it
+                        else if (result.get(f).matches(ops))
+                        {
+                            // Check that no division by 0 occurs
+                            if (f < result.size()
+                                    && result.get(f).equals("/")
+                                    && result.get(f + 1).matches("(-?0)*\\.?0*"))
+                            {
+                                CommandManager.throwGenericError(bot, sender, "Cannot divide by 0!");
+                                return;
+                            }
+                            if (!result.get(f).matches("[()]"))
+                                operations.add(result.get(f));
+                        }
+
+                        // If the item didn't get put in one of the lists, it shouldn't be in the equation
+                        else
+                        {
+                            CommandManager.throwGenericError(bot, sender, "Your equation contains an unresolved item: " + result.get(f));
+                            return;
+                        }
                     }
 
-                    // Otherwise it's probably 'minus'
-                    else
-                        operations.add("-");
-                }
-
-                // If the item is a number, add it
-                else if (equationSplit[z].matches("\\d+"))
-                    numbers.add(Double.parseDouble(equationSplit[z]));
-
-                // If the item is an operator, add it
-                else if (equationSplit[z].matches(ops))
-                {
-                    // Check that no division by 0 occurs
-                    if (z < equationSplit.length
-                            && equationSplit[z].equals("/")
-                            && equationSplit[z + 1].matches("[-?0]")) {
-                        bot.sendMessage(channel, "Error: Cannot divide by 0!");
+                    // The number of operators should always be one less than the number of numbers - throw an error if it isn't
+                    if (operations.size() + 1 != numbers.size())
+                    {
+                        CommandManager.throwGenericError(bot, sender, "The number of operations does not match the number of numbers");
                         return;
                     }
-                    operations.add(equationSplit[z]);
+
+                    String current = String.valueOf(getResult(numbers, operations));
+
+                    // Remove the old items from the bracket and replace them with their result
+                    for (s = b + 1; s < f; s++)
+                        result.remove(b + 1);
+                    result.add(b + 1, current);
+
+                    // If the item after the bracketed section is not an operation, insert a multiplication
+                    if (b < result.size() - 2
+                            && result.get(b).equals("(")
+                            && !result.get(b + 2).matches(ops))
+                        result.add(b + 2, "*");
+
+                        // If the item before the bracketed section is not an operation, insert a multiplication
+                    else if (b > 0
+                            && result.get(b).equals("(")
+                            && (!result.get(b - 1).matches(ops)
+                            || result.get(b - 1).equals(")")))
+                        result.set(b, "*");
+
+                        // Otherwise, simply remove the bracket
+                    else
+                        result.remove(b);
                 }
-
-                // Throw an error if the item is something other than a number or operator
-                else
-                {
-                    CommandManager.throwGenericError(bot, sender, String.format("Error: Your equation contains an unknown item (%s)", equationSplit[z]));
-                    return;
-                }
             }
 
-            String finalEquation = "";
-            for (int a = 0; a < numbers.size(); a++)
-            {
-                if (a <= numbers.size())
-                    finalEquation += numbers.get(a) + " ";
-                if (a < operations.size())
-                    finalEquation += operations.get(a) + " ";
-            }
+            String finalResult = result.get(0);
 
-            bot.sendMessage(channel, "Interpreted as: " + finalEquation.replaceAll("\\.0\\b", ""));
-
-            // Solve the equation
-            String result = String.valueOf(getResult(numbers, operations));
-
-            // Shorten decimal answers to prevent spam
-            if (result.contains(".")) {
-                String[] resSplit = result.split("[.]");
-                if (resSplit[1].length() > 6)
-                    result = resSplit[0] + "." + resSplit[1].substring(0, 6);
-            }
-
-            bot.sendMessage(channel, "Result: " + String.valueOf(result).replaceAll("\\.0\\b", ""));
+            bot.sendMessage(channel, "Result: " + finalResult.replaceAll("\\.0\\b", ""));
         }
 
         // Throw an error if the parameters are incorrect
@@ -203,6 +266,7 @@ public final class CommandSolve implements Command {
                     numList.remove(l);
                     numList.add(l, first);
                     opList.remove(l);
+                    break;
                 }
             }
         }

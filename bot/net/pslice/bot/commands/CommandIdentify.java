@@ -36,12 +36,12 @@ public final class CommandIdentify implements Command {
 
                 // Check if the bot actually identified
                 if (!bot.getUserBot().isVerified())
-                    CommandManager.throwGenericError(bot, sender, "Error: Couldn't identify (Incorrect password supplied?)");
+                    CommandManager.throwGenericError(bot, sender, "Couldn't identify (Incorrect password supplied?)");
             }
 
             // Throw an error if there isn't
             else
-                CommandManager.throwGenericError(bot, sender, "Error: No password was supplied to log in with!");
+                CommandManager.throwGenericError(bot, sender, "No password was supplied to log in with!");
         }
 
         // Throw an error if the parameters are incorrect

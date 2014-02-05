@@ -32,7 +32,7 @@ public final class CommandProperties implements Command {
             // Not allowed to change who the bot Master is
             if (property.equals("master"))
             {
-                CommandManager.throwGenericError(bot, sender, "Error: That property cannot be changed!");
+                CommandManager.throwGenericError(bot, sender, "That property cannot be changed!");
                 return;
             }
 
@@ -45,7 +45,7 @@ public final class CommandProperties implements Command {
 
             // Throw an error if it doesn't
             else
-                CommandManager.throwGenericError(bot,sender, String.format("Error: The property '%s' was not recognized!", property));
+                CommandManager.throwGenericError(bot,sender, String.format("The property '%s' was not recognized!", property));
         }
 
         // Throw an error if the parameters are incorrect

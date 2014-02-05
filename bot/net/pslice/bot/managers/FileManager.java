@@ -51,7 +51,9 @@ public final class FileManager {
             ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(String.format("%s/%s.bin", directory, name)));
             output.writeObject(object);
             output.close();
-        } catch (Exception e) {
+        }
+
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -104,5 +106,4 @@ public final class FileManager {
     {
         return new File(String.format("%s/%s.bin", directory, name)).exists();
     }
-
 }

@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.Set;
 
 public final class PropertiesManager implements Constants {
 
@@ -160,6 +161,23 @@ public final class PropertiesManager implements Constants {
     public boolean isAlert(String alert)
     {
         return alerts.containsKey(alert);
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for all alerts:
+     *
+     * @return A set of all alerts
+     * ===========================================
+     */
+
+    public Set<String> getAlerts()
+    {
+        return alerts.keySet();
     }
 
 

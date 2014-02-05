@@ -208,7 +208,7 @@ public final class BotProperties {
         parameters.put("setproperty", "setproperty <property> <value>");
         parameters.put("setuser", "setuser <setting> <user> <value>");
         parameters.put("solve", "solve <equation>");
-        parameters.put("toggleinputmethod", "+toggleinputmethod");
+        parameters.put("toggleinputmethod", "toggleinputmethod");
         parameters.put("twerk", "twerk");
         parameters.put("user", "user (setting) <user>");
         parameters.put("verbose", "verbose");
@@ -262,6 +262,57 @@ public final class BotProperties {
 
         return descriptions;
     }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Default enabled states for commands:
+     *
+     * @return Default states
+     * If no loadable states can be found, these get
+     *     saved in their place
+     * ===========================================
+     */
+
+    public static HashMap<String, Boolean> defaultEnabledStates()
+    {
+        HashMap<String, Boolean> parameters = new HashMap<>();
+
+        // Listed in alphabetical order:
+
+        parameters.put("action", true);
+        parameters.put("alert", true);
+        parameters.put("help", true);
+        parameters.put("identify", true);
+        parameters.put("join", true);
+        parameters.put("kick", true);
+        parameters.put("leave", true);
+        parameters.put("link", true);
+        parameters.put("override", true);
+        parameters.put("ping", true);
+        parameters.put("quit", true);
+        parameters.put("reload", true);
+        parameters.put("rename", true);
+        parameters.put("restart", false);
+        parameters.put("say", true);
+        parameters.put("setcommand", true);
+        parameters.put("setproperty", true);
+        parameters.put("setuser", true);
+        parameters.put("solve", true);
+        parameters.put("toggleinputmethod", true);
+        parameters.put("twerk", true);
+        parameters.put("user", true);
+        parameters.put("verbose", true);
+
+        return parameters;
+    }
+
+
+
+
 
     /*
      * ===========================================

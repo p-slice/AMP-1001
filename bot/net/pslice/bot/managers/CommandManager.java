@@ -34,6 +34,11 @@ public final class CommandManager implements Constants {
             // Map of all descriptions for commands
             descriptions;
 
+    private HashMap<String, Boolean>
+
+            // Map of all enabled states for commands
+            enabled;
+
     private final FileManager
 
             // File manager used by the bot
@@ -106,6 +111,15 @@ public final class CommandManager implements Constants {
         {
             descriptions = BotProperties.defaultDescriptions();
             fileManager.save(descriptions, command_description_location);
+        }
+
+        // Load files for command enabled states
+        if (fileManager.fileExists(command_enabled_location))
+            enabled = fileManager.load(command_enabled_location);
+        else
+        {
+            enabled = BotProperties.defaultEnabledStates();
+            fileManager.save(enabled, command_enabled_location);
         }
     }
 
@@ -263,6 +277,44 @@ public final class CommandManager implements Constants {
 
     /**
      * ===========================================
+     * Setter for the enabled state of a command:
+     *
+     * @param command: The command being set
+     * @param enabled: The new enabled state
+     * Upon setting the new state, the file is saved
+     * ===========================================
+     */
+
+    public void setEnabled(String command, boolean enabled)
+    {
+        this.enabled.put(command, enabled);
+        fileManager.save(this.enabled, command_enabled_location);
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for the enabled state of a command:
+     *
+     * @param command: The command being used
+     * @return Whether or not the command is enabled
+     * ===========================================
+     */
+
+    public boolean isEnabled(String command)
+    {
+        return enabled.get(command);
+    }
+
+
+
+
+
+    /**
+     * ===========================================
      * Getter for whether or not a command exists
      *
      * @param command: The command being checked
@@ -320,7 +372,7 @@ public final class CommandManager implements Constants {
 
     public static void throwUnknownCommandError(AmpBot bot, User sender, String command)
     {
-        bot.sendNotice(sender, String.format("Error: The command '%s' was not recognized! Type '%shelp' for a list of commands",
+        throwGenericError(bot, sender, String.format("The command '%s' was not recognized! Type '%shelp' for a list of commands",
                 command, bot.getPropertiesManager().getProperty("prefix")));
     }
 
@@ -342,7 +394,7 @@ public final class CommandManager implements Constants {
 
     public static void throwInsufficientRankError(AmpBot bot, User sender, int p, int r)
     {
-        bot.sendNotice(sender, String.format("Error: Insufficient permissions! (Your rank: %d Required rank: %s)", p, r));
+        throwGenericError(bot, sender, String.format("Insufficient permissions! (Your rank: %d Required rank: %s)", p, r));
     }
 
 
@@ -364,7 +416,7 @@ public final class CommandManager implements Constants {
 
     public static void throwIncorrectParametersError(AmpBot bot, User sender, String command)
     {
-        bot.sendNotice(sender, String.format("Error: Incorrect parameters! (Command usage: %s%s)",
+        throwGenericError(bot, sender, String.format("Incorrect parameters! (Command usage: %s%s)",
                 bot.getPropertiesManager().getProperty("prefix"), bot.getCommandManager().getParameters(command)));
     }
 
@@ -386,7 +438,7 @@ public final class CommandManager implements Constants {
 
     public static void throwUnknownChannelError(AmpBot bot, User sender, String channel)
     {
-        bot.sendNotice(sender, String.format("Error: The channel '%s' was not recognized!", channel));
+        throwGenericError(bot, sender, String.format("The channel '%s' was not recognized!", channel));
     }
 
 
@@ -408,7 +460,7 @@ public final class CommandManager implements Constants {
 
     public static void throwUnknownSettingError(AmpBot bot, User sender, String setting)
     {
-        bot.sendNotice(sender, String.format("Error: The setting '%s' was not recognized!", setting));
+        throwGenericError(bot, sender, String.format("The setting '%s' was not recognized!", setting));
     }
 
 
@@ -430,6 +482,6 @@ public final class CommandManager implements Constants {
 
     public static void throwGenericError(AmpBot bot, User sender, String message)
     {
-        bot.sendNotice(sender, message);
+        bot.sendNotice(sender, "\u00034Error\u00031: " + message);
     }
 }

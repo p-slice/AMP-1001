@@ -38,7 +38,7 @@ public final class CommandKick implements Command {
 
                 // Throw an error if they aren't
                 else
-                    CommandManager.throwGenericError(bot, sender, String.format("Error: The user '%s' is not in this channel!", args[0]));
+                    CommandManager.throwGenericError(bot, sender, String.format("The user '%s' is not in this channel!", args[0]));
             }
 
             // Kick the user for a given reason
@@ -55,7 +55,7 @@ public final class CommandKick implements Command {
 
                 // Throw an error if they aren't
                 else
-                    CommandManager.throwGenericError(bot, sender, String.format("Error: The user '%s' is not in that channel!", args[0]));
+                    CommandManager.throwGenericError(bot, sender, String.format("The user '%s' is not in that channel!", args[0]));
             }
 
             // Throw an error if the parameters are incorrect

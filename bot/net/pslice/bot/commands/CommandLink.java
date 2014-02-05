@@ -38,7 +38,7 @@ public final class CommandLink implements Command {
 
             // Throw an error if it doesn't
             else
-                CommandManager.throwGenericError(bot, sender, String.format("Error: The link '%s' was not recognized!", link));
+                CommandManager.throwGenericError(bot, sender, String.format("The link '%s' was not recognized!", link));
         }
 
         // Two arguments - save a link

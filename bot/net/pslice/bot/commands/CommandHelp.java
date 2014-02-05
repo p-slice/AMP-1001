@@ -30,11 +30,11 @@ public final class CommandHelp implements Command {
         if (args.length == 0)
         {
             bot.sendNotice(sender, "List of Commands:");
-            bot.sendNotice(sender, "(Use \u00034+help <command>\u00031 for specific command help)");
+            bot.sendNotice(sender, String.format("(Use \u00034%shelp <command>\u00031 for specific command help)", bot.getPropertiesManager().getProperty("prefix")));
 
             // Send info for each command. To reduce spam, only commands within 5 ranks of the user's are sent
             for (String helpCommand : commandManager.getCommands())
-                if (bot.getUserManager().getRank(sender.getNick()) < commandManager.getRank(command) + 5)
+                if (bot.getUserManager().getRank(sender.getNick()) + 5 >= commandManager.getRank(helpCommand))
                     bot.sendNotice(sender, String.format("\u0002%s\u000F: %s", helpCommand, commandManager.getDescription(helpCommand)));
         }
 

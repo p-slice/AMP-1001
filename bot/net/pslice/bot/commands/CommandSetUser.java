@@ -47,7 +47,7 @@ public final class CommandSetUser implements Command {
 
                     // Throw an error if it isn't
                     else
-                        CommandManager.throwGenericError(bot, sender, "Error: Rank must be a number!");
+                        CommandManager.throwGenericError(bot, sender, "Rank must be a number!");
                     break;
 
                 // Change the nickname of the user

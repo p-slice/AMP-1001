@@ -17,6 +17,7 @@ public interface Constants {
             command_rank_location = "commands.ranks",
             command_parameter_location = "commands.parameters",
             command_description_location = "commands.descriptions",
+            command_enabled_location = "commands.enabled",
 
             user_rank_location = "users.ranks",
             user_nick_location = "users.nicks",

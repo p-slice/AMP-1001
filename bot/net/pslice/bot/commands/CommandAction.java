@@ -31,7 +31,22 @@ public final class CommandAction implements Command {
             String message = args[1];
             for (int i = 2; i < args.length; i++)
                 message += " " + args[i];
+
+            boolean inChannel = false;
+
+            // Check if the bot is in the channel already
+            if (bot.getChannel(args[0]).getUsers().contains(bot.getUserBot()))
+                inChannel = true;
+
+            // If the bot isn't in the channel, join it
+            if (!inChannel)
+                bot.joinChannel(args[0]);
+
             bot.sendAction(args[0], message);
+
+            // If the bot wasn't in the channel, leave it
+            if (!inChannel)
+                bot.partChannel(bot.getChannel(args[0]));
         }
 
         // Otherwise the action is sent to the original channel

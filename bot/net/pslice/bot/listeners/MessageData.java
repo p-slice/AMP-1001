@@ -143,18 +143,27 @@ public final class MessageData extends ListenerAdapter<AmpBot> {
 
         if (commandManager.isCommand(command))
         {
-            if (p >= r
-                    || (bot.isOverride() && user.getNick().equals(propertiesManager.getProperty("master")))
-                    || command.equals("override"))
-                try
-                {
-                    Command cmd = (Command)commandManager.getClass(command).newInstance();
-                    cmd.execute(bot, channel, user, command, args);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+            if (commandManager.isEnabled(command)
+                    || bot.isOverride())
+            {
+                if (p >= r
+                        || bot.isOverride()
+                        || command.equals("override"))
+                    try
+                    {
+                        Command cmd = (Command)commandManager.getClass(command).newInstance();
+                        cmd.execute(bot, channel, user, command, args);
+                    }
+
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                else
+                    CommandManager.throwInsufficientRankError(bot, user, p, r);
+            }
+
             else
-                CommandManager.throwInsufficientRankError(bot, user, p, r);
+                CommandManager.throwGenericError(bot, user, String.format("The command '%s' is not currently enabled", command));
         } else {
             CommandManager.throwUnknownCommandError(bot, user, command);
         }

@@ -47,6 +47,6 @@ public final class CommandOverride implements Command {
 
         // Throw an error if it isn't
         else
-            CommandManager.throwGenericError(bot, sender, "Error: You do not have permission to do that command!");
+            CommandManager.throwGenericError(bot, sender, "You do not have permission to do that command!");
     }
 }

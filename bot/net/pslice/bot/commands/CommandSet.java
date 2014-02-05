@@ -49,7 +49,7 @@ public final class CommandSet implements Command {
 
                         // Throw an error if it isn't
                         else
-                            CommandManager.throwGenericError(bot, sender, "Error: Rank must be a number!");
+                            CommandManager.throwGenericError(bot, sender, "Rank must be a number!");
                         break;
 
                     // Change the parameters for the command
@@ -72,6 +72,33 @@ public final class CommandSet implements Command {
                             desc += " " + args[i];
                         commandManager.setDescription(editCommand, desc);
                         bot.sendMessage(channel, String.format("The description for '%s' is now '%s'", editCommand, desc));
+                        break;
+
+                    // Change whether or not the command is enabled
+                    case "enabled":
+                    case "e":
+
+                        // No one is allowed to disable these
+                        if (editCommand.matches("setcommand|setuser|override"))
+                        {
+                            CommandManager.throwGenericError(bot, sender, "Changing that setting is denied.");
+                            return;
+                        }
+
+                        String enabled = args[2].toLowerCase();
+                        switch (enabled) {
+                            case "true":
+                                commandManager.setEnabled(editCommand, true);
+                                bot.sendMessage(channel, String.format("The command '%s' is now enabled", editCommand));
+                                break;
+                            case "false":
+                                commandManager.setEnabled(editCommand, false);
+                                bot.sendMessage(channel, String.format("The command '%s' is now disabled", editCommand));
+                                break;
+                            default:
+                                CommandManager.throwGenericError(bot, sender, "You can only set the enabled state to true or false!");
+                                break;
+                        }
                         break;
 
                     // The setting is not recognized - throw an error

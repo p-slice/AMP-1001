@@ -2,6 +2,7 @@ package net.pslice.bot.commands;
 
 import net.pslice.bot.AmpBot;
 import net.pslice.bot.managers.CommandManager;
+import net.pslice.bot.managers.PropertiesManager;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
@@ -23,21 +24,39 @@ public final class CommandAlert implements Command {
 
     public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
     {
+        PropertiesManager propertiesManager = bot.getPropertiesManager();
+
         // Should only have one arg - the name of the alert
         if (args.length == 1)
         {
             String alert = args[0].toLowerCase();
 
-            // Check if the alert exists
-            if (bot.getPropertiesManager().isAlert(alert))
+            if (alert.equals("on"))
             {
-                bot.getPropertiesManager().toggleAlert(alert);
-                bot.sendMessage(channel, String.format("The alert for '%s' has been set to %b", alert, bot.getPropertiesManager().getAlertState(alert)));
+                for (String setAlert : propertiesManager.getAlerts())
+                    while (!propertiesManager.getAlertState(setAlert))
+                        propertiesManager.toggleAlert(setAlert);
+                bot.sendMessage(channel, "All alerts turned on.");
+            }
+
+            else if (alert.equals("off"))
+            {
+                for (String setAlert : propertiesManager.getAlerts())
+                    while (!propertiesManager.getAlertState(setAlert))
+                        propertiesManager.toggleAlert(setAlert);
+                bot.sendMessage(channel, "All alerts turned off.");
+            }
+
+            // Check if the alert exists
+            else if (propertiesManager.isAlert(alert))
+            {
+                propertiesManager.toggleAlert(alert);
+                bot.sendMessage(channel, String.format("The alert for '%s' has been set to %b", alert, propertiesManager.getAlertState(alert)));
             }
 
             // Throw an error if it doesn't
             else
-                CommandManager.throwGenericError(bot, sender, String.format("Error: The alert '%s' was not recognized!", alert));
+                CommandManager.throwGenericError(bot, sender, String.format("The alert '%s' was not recognized!", alert));
         }
 
         // Throw an error if the parameters are incorrect
