@@ -23,15 +23,17 @@ General Commands:
     - If no command is specified, a list of all possible commands is given.
 - say (#channel) \<message>: Command to send a message to a channel.
     - If no channel is specified, the message is sent to the channel the command was run in.
+    - If the bot is not in the channel, it will join it, send the message, and leave again.
 - action (#channel) \<action>: Command to send an action to a channel.
     - If no channel is specified, the action is sent to the channel the command was run in.
+    - If the bot is not in the channel, it will join it, send the action, and leave again.
 - link \<name> (new link): Command to display a link to a saved website.
     - To save a new link, put the URL after the name of the link.
 - user \<name>: Command to view info about a user.
 - rename \<name>: Command to change the name of the bot.
 - twerk: Command similar to "Roulette" on most bots, only this one involves twerking.
 - solve \<equation>: Command to solve a basic equation.
-    - Brackets currently are not supported, but should be soon.
+    - Variables are currently not supported. I might add support for that later.
 - ping: The good old pinging command.
 
 Administrative Commands:
@@ -69,6 +71,7 @@ Bot Properties (Found in Files/BotInfo.properties):
 Other features (More are being worked on, this may remain small for a while):
 - PMs are forwarded to the assigned "Master".
 - Commands can be run from in private messages now.
+- Commands can be enabled/disabled.
 - Bot is once again object based instead of static method based, making it easier to run multiple at once.
 - Alerts:
     - If the alert for an event is enabled, the bot will PM its "Master" with details about the event.
