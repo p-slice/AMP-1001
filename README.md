@@ -21,19 +21,21 @@ General Commands:
     - If no reason is specified, the message is "Kicked from channel".
 - help (command): Command to display info about a command.
     - If no command is specified, a list of all possible commands is given.
+- info \<property>: Command to display info about a bot property.
 - say (#channel) \<message>: Command to send a message to a channel.
     - If no channel is specified, the message is sent to the channel the command was run in.
     - If the bot is not in the channel, it will join it, send the message, and leave again.
 - action (#channel) \<action>: Command to send an action to a channel.
     - If no channel is specified, the action is sent to the channel the command was run in.
     - If the bot is not in the channel, it will join it, send the action, and leave again.
-- link \<name> (new link): Command to display a link to a saved website.
-    - To save a new link, put the URL after the name of the link.
+- remember \<name> (new memory): Command to save text info for later use.
+    - To save a new memory, type it in after the name.
 - user \<name>: Command to view info about a user.
 - rename \<name>: Command to change the name of the bot.
 - twerk: Command similar to "Roulette" on most bots, only this one involves twerking.
 - solve \<equation>: Command to solve a basic equation.
-    - Variables are currently not supported. I might add support for that later.
+    - Supported operations include +, -, *, /, ^, !, brackets and functions.
+- function f(x) = (equation): Command to save and view functions.
 - ping: The good old pinging command.
 
 Administrative Commands:
@@ -46,7 +48,8 @@ Administrative Commands:
 - override**: Command to toggle override mode.
 - identify: Command to identify the bot with NickServ.
 - alert \<event>: Command to toggle alerts for various events.
-- restart: (Currently broken, normally should restart the bot).
+- restart: Command to restart the program (Must be running from a .jar instance).
+- reset \<command>: Command to reset a command to its default settings.
 
 \* Options are:
 - By assigned rank: ranks are custom to individual users.
@@ -70,7 +73,7 @@ Bot Properties (Found in Files/BotInfo.properties):
 
 Other features (More are being worked on, this may remain small for a while):
 - PMs are forwarded to the assigned "Master".
-- Commands can be run from in private messages now.
+- Commands can be run from in private messages.
 - Commands can be enabled/disabled.
 - Bot is once again object based instead of static method based, making it easier to run multiple at once.
 - Alerts:
