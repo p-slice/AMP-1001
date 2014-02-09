@@ -30,6 +30,9 @@ public final class FileManager {
     public FileManager(String directory)
     {
         this.directory = directory;
+        File dir = new File(directory);
+        if (!dir.exists())
+            dir.mkdir();
     }
 
 

@@ -288,12 +288,15 @@ public final class MathFunctions {
 
                         // Look for '-' signs - could be either 'minus' or 'negative'
                         if (equation.get(f).equals("-")
-                                && equation.get(f + 1).matches("\\d*\\.?\\d*E?(-?\\d)*"))
+                                && equation.get(f + 1).matches("(-?\\d)*\\.?\\d*E?(-?\\d)*"))
                         {
                             // If it is the first item or the previous item is an operation, assume 'negative'
                             if (f == b || equation.get(f - 1).matches(ops))
                             {
-                                numbers.add(Double.parseDouble("-" + equation.get(f + 1)));
+                                if (equation.get(f + 1).startsWith("-"))
+                                    numbers.add(Double.parseDouble(equation.get(f + 1).substring(1)));
+                                else
+                                    numbers.add(Double.parseDouble("-" + equation.get(f + 1)));
                                 f++;
                             }
 
