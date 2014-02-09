@@ -83,35 +83,35 @@ public final class MathFunctions {
 
     public static String replaceValues(String equation, String oldItem, String newItem)
     {
-        equation = equation.replaceAll(oldItem, "*" + newItem + "*");
+        List<String> equationSplit = new LinkedList<>(Arrays.asList(equation.split("((?<=op)|(?=op))".replace("op", "[-+*/^()!0-9]"))));
 
-        List<String> equationSplit = new LinkedList<>(Arrays.asList(equation.split("(?!^)")));
-
-        // Remove possible extra '*'s from the start and end
         for (int i = 0; i < equationSplit.size(); i++)
-            if (equationSplit.get(i).equals("*")
-                    && (i == 0
-                    || i == equationSplit.size() - 1))
-                equationSplit.remove(i);
+        {
+            // Check for the old item
+            if (equationSplit.get(i).matches(oldItem))
+            {
+                // Add a multiplication after the old item if needed
+                if (i < equationSplit.size() - 1
+                        && !equationSplit.get(i + 1).matches(ops))
+                    equationSplit.add(i + 1, "*");
 
-        // Remove possible extra '*'s that may have been added after another operation
-        for (int i = 1; i < equationSplit.size(); i++)
-            if (equationSplit.get(i).equals("*")
-                    && (equationSplit.get(i - 1).matches(ops)
-                    && !equationSplit.get(i - 1).equals("!")))
-                equationSplit.remove(i);
+                // Add a multiplication before the old item if needed
+                if (i > 0
+                    && !equationSplit.get(i - 1).matches(ops))
+                {
+                    equationSplit.add(i, "*");
+                    i++;
+                }
+            }
+        }
 
-        // Remove possible extra '*'s that may have been added before another operation
-        for (int i = 0; i < equationSplit.size() - 1; i++)
-            if (equationSplit.get(i).equals("*")
-                    && (equationSplit.get(i + 1).matches(ops)
-                    && !equationSplit.get(i + 1).equals("!")))
-                equationSplit.remove(i);
-
-        // Save the equation without the extra multiplication
+        // Make sure the equation has any new multiplications in it
         equation = "";
         for (String s : equationSplit)
             equation += s;
+
+        // Replace the old item with the new item
+        equation = equation.replaceAll(oldItem, newItem);
 
         return equation;
     }
@@ -265,10 +265,10 @@ public final class MathFunctions {
 
                         // Look for factorials - replace them with an regular number
                         if (f < equation.size() - 1
-                                && equation.get(f).matches("\\d+(\\.0)?")
+                                && equation.get(f).matches("\\d+(\\.0+)?")
                                 && equation.get(f + 1).equals("!"))
                         {
-                            int i = Integer.parseInt(equation.get(f).replaceAll("\\.0\\b", ""));
+                            int i = Integer.parseInt(equation.get(f).replaceAll("\\.0+", ""));
                             int r = 1;
                             while (i > 0)
                             {
@@ -282,7 +282,7 @@ public final class MathFunctions {
                         // If a factorial isn't working on a number, it's in the wrong place
                         if (equation.get(f).equals("!"))
                         {
-                            CommandManager.throwGenericError(bot, sender, "Error: Misplaced factorial!");
+                            CommandManager.throwGenericError(bot, sender, "Factorials can only work on whole numbers!");
                             return null;
                         }
 
