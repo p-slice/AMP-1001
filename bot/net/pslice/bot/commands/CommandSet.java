@@ -5,7 +5,23 @@ import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-public final class CommandSet implements Command {
+import java.io.Serializable;
+
+public final class CommandSet extends Command implements Serializable {
+
+    /*
+     * ===========================================
+     * Initializer:
+     *
+     * The master Command class is initialized with defaults
+     *     specific to the command
+     * ===========================================
+     */
+
+    public CommandSet()
+    {
+        super("setcommand", 10, "<setting> <name> <value>", "Change the setting of a command", true);
+    }
 
     /**
      * ===========================================
@@ -14,13 +30,12 @@ public final class CommandSet implements Command {
      * @param bot: The bot the command was sent to
      * @param channel: The channel the command was sent in
      * @param sender: The user the command was sent by
-     * @param command: The name of the command
      * @param args: The arguments sent with the command
      * This command will change the settings of a specified command
      * ===========================================
      */
 
-    public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
+    public void execute(AmpBot bot, Channel channel, User sender, String... args)
     {
         // Command requires three args - the setting, the name of the command and the new value
         if (args.length >= 3)
@@ -33,6 +48,7 @@ public final class CommandSet implements Command {
             // Check if the command exists
             if (commandManager.isCommand(editCommand))
             {
+                Command command = commandManager.getCommand(editCommand);
                 // Check which setting is being changed
                 switch (setting)
                 {
@@ -43,7 +59,7 @@ public final class CommandSet implements Command {
 
                         // Make sure the new rank is numbers only
                         if (args[2].matches("-?[\\d]+")) {
-                            commandManager.setRank(editCommand, Integer.parseInt(args[2]));
+                            command.setRank(Integer.parseInt(args[2]));
                             bot.sendMessage(channel, String.format("The required rank for '%s' is now %s", editCommand, args[2]));
                         }
 
@@ -59,7 +75,7 @@ public final class CommandSet implements Command {
                         String params = args[2];
                         for (int i = 3; i < args.length; i++)
                             params += " " + args[i];
-                        commandManager.setParameters(editCommand, params);
+                        command.setParameters(params);
                         bot.sendMessage(channel, String.format("The parameters for '%s' are now '%s'", editCommand, params));
                         break;
 
@@ -70,7 +86,7 @@ public final class CommandSet implements Command {
                         String desc = args[2];
                         for (int i = 3; i < args.length; i++)
                             desc += " " + args[i];
-                        commandManager.setDescription(editCommand, desc);
+                        command.setDescription(editCommand);
                         bot.sendMessage(channel, String.format("The description for '%s' is now '%s'", editCommand, desc));
                         break;
 
@@ -79,7 +95,7 @@ public final class CommandSet implements Command {
                     case "e":
 
                         // No one is allowed to disable these
-                        if (editCommand.matches("setcommand|setuser|override"))
+                        if (editCommand.matches("setcommand|setuser|override|quit|reload|setproperty"))
                         {
                             CommandManager.throwGenericError(bot, sender, "Changing that setting is denied.");
                             return;
@@ -88,11 +104,11 @@ public final class CommandSet implements Command {
                         String enabled = args[2].toLowerCase();
                         switch (enabled) {
                             case "true":
-                                commandManager.setEnabled(editCommand, true);
+                                command.setEnabled(true);
                                 bot.sendMessage(channel, String.format("The command '%s' is now enabled", editCommand));
                                 break;
                             case "false":
-                                commandManager.setEnabled(editCommand, false);
+                                command.setEnabled(false);
                                 bot.sendMessage(channel, String.format("The command '%s' is now disabled", editCommand));
                                 break;
                             default:
@@ -104,17 +120,18 @@ public final class CommandSet implements Command {
                     // The setting is not recognized - throw an error
                     default:
                         CommandManager.throwUnknownSettingError(bot, sender, setting);
-                        break;
+                        return;
                 }
+                commandManager.saveCommands();
             }
 
             // Throw an error if not a command
             else
-                CommandManager.throwUnknownCommandError(bot, sender, command);
+                CommandManager.throwUnknownCommandError(bot, sender, editCommand);
         }
 
         // Throw an error if the parameters are incorrect
         else
-            CommandManager.throwIncorrectParametersError(bot, sender, command);
+            CommandManager.throwIncorrectParametersError(bot, sender, this);
     }
 }

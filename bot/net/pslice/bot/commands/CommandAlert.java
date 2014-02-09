@@ -6,7 +6,23 @@ import net.pslice.bot.managers.PropertiesManager;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-public final class CommandAlert implements Command {
+import java.io.Serializable;
+
+public final class CommandAlert extends Command implements Serializable {
+
+    /*
+     * ===========================================
+     * Initializer:
+     *
+     * The master Command class is initialized with defaults
+     *     specific to the command
+     * ===========================================
+     */
+
+    public CommandAlert()
+    {
+        super("alert", 10, "<event>", "Toggle alerts for server events", true);
+    }
 
     /**
      * ===========================================
@@ -15,14 +31,13 @@ public final class CommandAlert implements Command {
      * @param bot: The bot the command was sent to
      * @param channel: The channel the command was sent in
      * @param sender: The user the command was sent by
-     * @param command: The name of the command
      * @param args: Any arguments that were sent with the command
      * This command will attempt to toggle the state of
      *     an alert, specified by the user
      * ===========================================
      */
 
-    public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
+    public void execute(AmpBot bot, Channel channel, User sender, String... args)
     {
         PropertiesManager propertiesManager = bot.getPropertiesManager();
 
@@ -42,7 +57,7 @@ public final class CommandAlert implements Command {
             else if (alert.equals("off"))
             {
                 for (String setAlert : propertiesManager.getAlerts())
-                    while (!propertiesManager.getAlertState(setAlert))
+                    while (propertiesManager.getAlertState(setAlert))
                         propertiesManager.toggleAlert(setAlert);
                 bot.sendMessage(channel, "All alerts turned off.");
             }
@@ -61,6 +76,6 @@ public final class CommandAlert implements Command {
 
         // Throw an error if the parameters are incorrect
         else
-            CommandManager.throwIncorrectParametersError(bot, sender, command);
+            CommandManager.throwIncorrectParametersError(bot, sender, this);
     }
 }

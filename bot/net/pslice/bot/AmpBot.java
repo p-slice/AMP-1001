@@ -33,6 +33,10 @@ public final class AmpBot extends PircBotX {
      * ===========================================
      */
 
+    public static final String
+
+            version = "3.2.2";
+
     private boolean
 
             // Whether or not the bot is in override mode

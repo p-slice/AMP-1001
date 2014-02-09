@@ -3,8 +3,10 @@ package net.pslice.bot.managers;
 import net.pslice.bot.AmpBot;
 import net.pslice.bot.BotProperties;
 import net.pslice.bot.Constants;
+import net.pslice.bot.commands.*;
 import org.pircbotx.User;
 
+import java.io.*;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -16,32 +18,14 @@ public final class CommandManager implements Constants {
      * ===========================================
      */
 
-    private HashMap<String, Class<?>>
+    private HashMap<String, Command>
 
-            // Map of all classes for commands
-            classes;
-
-    private HashMap<String, Integer>
-
-            // Map of all ranks for commands
-            ranks;
-
-    private HashMap<String, String>
-
-            // Map of all parameters for commands
-            parameters,
-
-            // Map of all descriptions for commands
-            descriptions;
-
-    private HashMap<String, Boolean>
-
-            // Map of all enabled states for commands
-            enabled;
+            // Map of all command names to their objects
+            commands = new HashMap<>();
 
     private final FileManager
 
-            // File manager used by the bot
+            // The file manager used by the bot
             fileManager;
 
 
@@ -65,9 +49,62 @@ public final class CommandManager implements Constants {
 
 
 
+    /**
+     * ===========================================
+     * Getter for whether or not a command exists:
+     *
+     * @param name: The name of the command
+     * @return Whether or not the command exists
+     * ===========================================
+     */
+
+    public boolean isCommand(String name)
+    {
+        return commands.containsKey(name);
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for a command:
+     *
+     * @param name: The name of the command
+     * @return The command object
+     * ===========================================
+     */
+
+    public Command getCommand(String name)
+    {
+        return commands.get(name);
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for a set of all command names
+     *
+     * @return The set of all command names
+     * ===========================================
+     */
+
+    public Set<String> getCommands()
+    {
+        return commands.keySet();
+    }
+
+
+
+
+
     /*
      * ===========================================
-     * Method to load maps:
+     * Method to load maps
      *
      * The bot will attempt to load files containing the maps
      * If the necessary files cannot be found, defaults are
@@ -77,49 +114,13 @@ public final class CommandManager implements Constants {
 
     public void loadFiles()
     {
-        // Load files for command classes
-        if (fileManager.fileExists(command_class_location))
-            classes = fileManager.load(command_class_location);
+        // Load file for command objects
+        if (fileManager.fileExists(command_location))
+            commands = fileManager.load(command_location);
         else
         {
-            classes = BotProperties.defaultClasses();
-            fileManager.save(classes, command_class_location);
-        }
-
-        // Load files for command ranks
-        if (fileManager.fileExists(command_rank_location))
-            ranks = fileManager.load(command_rank_location);
-        else
-        {
-            ranks = BotProperties.defaultRanks();
-            fileManager.save(ranks, command_rank_location);
-        }
-
-        // Load files for command parameters
-        if (fileManager.fileExists(command_parameter_location))
-            parameters = fileManager.load(command_parameter_location);
-        else
-        {
-            parameters = BotProperties.defaultParameters();
-            fileManager.save(parameters, command_parameter_location);
-        }
-
-        // Load files for command descriptions
-        if (fileManager.fileExists(command_description_location))
-            descriptions = fileManager.load(command_description_location);
-        else
-        {
-            descriptions = BotProperties.defaultDescriptions();
-            fileManager.save(descriptions, command_description_location);
-        }
-
-        // Load files for command enabled states
-        if (fileManager.fileExists(command_enabled_location))
-            enabled = fileManager.load(command_enabled_location);
-        else
-        {
-            enabled = BotProperties.defaultEnabledStates();
-            fileManager.save(enabled, command_enabled_location);
+            commands = BotProperties.defaultCommands();
+            fileManager.save(commands, command_location);
         }
     }
 
@@ -127,229 +128,15 @@ public final class CommandManager implements Constants {
 
 
 
-    /**
+    /*
      * ===========================================
-     * Getter for the class a command is located in:
-     *
-     * @param command: The command being used
-     * @return The class assigned to the command
-     *         Null if no class is found
+     * Method to save all commands
      * ===========================================
      */
 
-    public Class<?> getClass(String command)
+    public void saveCommands()
     {
-        return classes.containsKey(command) ? classes.get(command) : null;
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Setter for the rank of a command:
-     *
-     * @param command: The command being set
-     * @param rank: The new rank of the command
-     * If the rank is equal to 0, it is removed from
-     *  the map
-     * Upon setting the new rank, the file is saved
-     * ===========================================
-     */
-
-    public void setRank(String command, int rank)
-    {
-        ranks.put(command, rank);
-        if (rank == 0)
-            ranks.remove(command);
-        fileManager.save(ranks, command_rank_location);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Getter for the rank of a command:
-     *
-     * @param command: The command being used
-     * @return The rank assigned to the command
-     *         0 if no rank is found
-     * ===========================================
-     */
-
-    public int getRank(String command)
-    {
-        return ranks.containsKey(command) ? ranks.get(command) : 0;
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Setter for the parameters of a command:
-     *
-     * @param command: The command being set
-     * @param parameters: The new parameters for the command
-     * If the parameters are empty, they are removed from
-     *  the map
-     * Upon setting the new parameters, the file is saved
-     * ===========================================
-     */
-
-    public void setParameters(String command, String parameters)
-    {
-        this.parameters.put(command, parameters);
-        if (parameters.equals(""))
-            this.parameters.remove(parameters);
-        fileManager.save(this.parameters, command_parameter_location);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Getter for the parameters of a command:
-     *
-     * @param command: The command being used
-     * @return The parameters assigned to the command
-     *         "(None Assigned)" if no parameters are found
-     * ===========================================
-     */
-
-    public String getParameters(String command)
-    {
-        return parameters.containsKey(command) ? parameters.get(command) : "(None Assigned)";
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Setter for the description of a command:
-     *
-     * @param command: The command being set
-     * @param description: The new description of the command
-     * If the description is empty, it is removed from
-     *  the map
-     * Upon setting the new description, the file is saved
-     * ===========================================
-     */
-
-    public void setDescription(String command, String description)
-    {
-        descriptions.put(command, description);
-        if (description.equals(""))
-            descriptions.remove(command);
-        fileManager.save(descriptions, command_description_location);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Getter for the description of a command:
-     *
-     * @param command: The command being used
-     * @return The description assigned to the command
-     *         "(None Assigned)" if no description is found
-     * ===========================================
-     */
-
-    public String getDescription(String command)
-    {
-        return descriptions.containsKey(command) ? descriptions.get(command) : "(None Assigned)";
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Setter for the enabled state of a command:
-     *
-     * @param command: The command being set
-     * @param enabled: The new enabled state
-     * Upon setting the new state, the file is saved
-     * ===========================================
-     */
-
-    public void setEnabled(String command, boolean enabled)
-    {
-        this.enabled.put(command, enabled);
-        fileManager.save(this.enabled, command_enabled_location);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Getter for the enabled state of a command:
-     *
-     * @param command: The command being used
-     * @return Whether or not the command is enabled
-     * ===========================================
-     */
-
-    public boolean isEnabled(String command)
-    {
-        return enabled.get(command);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Getter for whether or not a command exists
-     *
-     * @param command: The command being checked
-     * @return Whether or not the command exists
-     * Existence is based on whether or not the command
-     *     is found in both the classes and ranks maps
-     * Parameters and descriptions maps are not checked
-     *     as they are not required for the command to
-     *     function
-     * ===========================================
-     */
-
-    public boolean isCommand(String command)
-    {
-        return classes.containsKey(command) && ranks.containsKey(command);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Getter for the set of all possible commands:
-     *
-     * @return All known commands
-     * The set of commands from the classes map is used
-     *     because it is impossible for a command to work
-     *     without a class assigned to it.
-     * ===========================================
-     */
-
-    public Set<String> getCommands()
-    {
-        return classes.keySet();
+        fileManager.save(commands, command_location);
     }
 
 
@@ -414,10 +201,10 @@ public final class CommandManager implements Constants {
      * ===========================================
      */
 
-    public static void throwIncorrectParametersError(AmpBot bot, User sender, String command)
+    public static void throwIncorrectParametersError(AmpBot bot, User sender, Command command)
     {
-        throwGenericError(bot, sender, String.format("Incorrect parameters! (Command usage: %s%s)",
-                bot.getPropertiesManager().getProperty("prefix"), bot.getCommandManager().getParameters(command)));
+        throwGenericError(bot, sender, String.format("Incorrect parameters! (Command usage: %s%s %s)",
+                bot.getPropertiesManager().getProperty("prefix"), command.name, command.getParameters()));
     }
 
 
@@ -482,6 +269,6 @@ public final class CommandManager implements Constants {
 
     public static void throwGenericError(AmpBot bot, User sender, String message)
     {
-        bot.sendNotice(sender, "\u00034Error\u00031: " + message);
+        bot.sendNotice(sender, "\u00034Error\u000F: " + message);
     }
 }

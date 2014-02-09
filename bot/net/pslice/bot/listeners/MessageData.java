@@ -1,10 +1,10 @@
 package net.pslice.bot.listeners;
 
 import net.pslice.bot.AmpBot;
-import net.pslice.bot.commands.Command;
 import net.pslice.bot.managers.CommandManager;
 import net.pslice.bot.managers.PropertiesManager;
 import net.pslice.bot.managers.UserManager;
+import net.pslice.bot.commands.Command;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 import org.pircbotx.hooks.ListenerAdapter;
@@ -34,7 +34,8 @@ public final class MessageData extends ListenerAdapter<AmpBot> {
 
         String[] messageSplit = event.getMessage().split("[ ]");
 
-        if (messageSplit[0].startsWith(bot.getPropertiesManager().getProperty("prefix")))
+        if (messageSplit[0].startsWith(bot.getPropertiesManager().getProperty("prefix"))
+                && !messageSplit[0].equals(bot.getPropertiesManager().getProperty("prefix")))
             doCommand(bot, channel, user, messageSplit);
     }
 
@@ -64,7 +65,8 @@ public final class MessageData extends ListenerAdapter<AmpBot> {
 
         String[] messageSplit = event.getMessage().split("[ ]");
 
-        if (messageSplit[0].startsWith(bot.getPropertiesManager().getProperty("prefix")))
+        if (messageSplit[0].startsWith(bot.getPropertiesManager().getProperty("prefix"))
+                && !messageSplit[0].equals(bot.getPropertiesManager().getProperty("prefix")))
         {
             doCommand(bot, bot.getChannel(user.getNick()), user, messageSplit);
             if (!user.equals(bot.getUser(bot.getPropertiesManager().getProperty("master"))))
@@ -90,16 +92,17 @@ public final class MessageData extends ListenerAdapter<AmpBot> {
      * @param channel: The channel the command was sent in
      * @param user: The user the command was sent by
      * @param messageSplit: An array of the command, split into individual words
-     * This method checks for 3 things before executing the command:
+     * This method checks for 4 things before executing the command:
      *  1) The state of override. If override is enabled,
      *      only the bot Master is allowed to perform commands
      *  2) If the command exists. An error occurs if it doesn't
-     *  3) If the user has a high enough rank to execute
+     *  3) If the command is enabled. The user is notified if it isn't
+     *  4) If the user has a high enough rank to execute
      *      the command. Ranks are based either on defined
      *      ranks or channel ranks, based on bot settings
      *     The override command does not require any rank as it
      *        uses its own requirements
-     * If all 3 requirements are met, the method attempts to
+     * If all 4 requirements are met, the method attempts to
      *   create a Command object and execute it
      * The bot Master is capable of enabling override mode at any time
      *   This is useful if he/she accidentally sets his/her rank
@@ -139,32 +142,33 @@ public final class MessageData extends ListenerAdapter<AmpBot> {
                 p = 0;
         }
 
-        int r = commandManager.getRank(command);
-
         if (commandManager.isCommand(command))
         {
-            if (commandManager.isEnabled(command)
+            Command cmd = commandManager.getCommand(command);
+            if (cmd.isEnabled()
                     || bot.isOverride())
             {
-                if (p >= r
+                if (p >= cmd.getRank()
                         || bot.isOverride()
                         || command.equals("override"))
                     try
                     {
-                        Command cmd = (Command)commandManager.getClass(command).newInstance();
-                        cmd.execute(bot, channel, user, command, args);
+                        cmd.execute(bot, channel, user, args);
                     }
 
                     catch (Exception e) {
                         e.printStackTrace();
                     }
+
                 else
-                    CommandManager.throwInsufficientRankError(bot, user, p, r);
+                    CommandManager.throwInsufficientRankError(bot, user, p, cmd.getRank());
             }
 
             else
                 CommandManager.throwGenericError(bot, user, String.format("The command '%s' is not currently enabled", command));
-        } else {
+        }
+
+        else {
             CommandManager.throwUnknownCommandError(bot, user, command);
         }
     }

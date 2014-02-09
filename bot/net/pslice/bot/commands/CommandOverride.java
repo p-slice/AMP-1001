@@ -5,7 +5,23 @@ import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-public final class CommandOverride implements Command {
+import java.io.Serializable;
+
+public final class CommandOverride extends Command implements Serializable {
+
+    /*
+     * ===========================================
+     * Initializer:
+     *
+     * The master Command class is initialized with defaults
+     *     specific to the command
+     * ===========================================
+     */
+
+    public CommandOverride()
+    {
+        super("override", 10, "", "Toggle Override mode", true);
+    }
 
     /**
      * ===========================================
@@ -14,7 +30,6 @@ public final class CommandOverride implements Command {
      * @param bot: The bot the command was sent to
      * @param channel: The channel the command was sent in
      * @param sender: The user the command was sent by
-     * @param command: The name of the command
      * @param args: The arguments sent with the command
      * This command will attempt to put the bot in
      *     Override mode. It can only be run by the bot
@@ -22,7 +37,7 @@ public final class CommandOverride implements Command {
      * ===========================================
      */
 
-    public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
+    public void execute(AmpBot bot, Channel channel, User sender, String... args)
     {
         // Check if the sender of the command is the bot Master
         if (sender.getNick().equals(bot.getPropertiesManager().getProperty("master")))
@@ -42,7 +57,7 @@ public final class CommandOverride implements Command {
 
             // Throw an error if the parameters are incorrect
             else
-                CommandManager.throwIncorrectParametersError(bot, sender, command);
+                CommandManager.throwIncorrectParametersError(bot, sender, this);
         }
 
         // Throw an error if it isn't

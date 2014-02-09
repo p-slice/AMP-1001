@@ -26,8 +26,11 @@ public final class PropertiesManager implements Constants {
 
     private HashMap<String, String>
 
-            // Map of all saved links
-            links;
+            // Map of all saved functions
+            functions,
+
+            // Map of all saved memories
+            memories;
 
     private Properties
 
@@ -96,13 +99,22 @@ public final class PropertiesManager implements Constants {
             fileManager.save(alerts, alert_location);
         }
 
-        // Load files for links
-        if (fileManager.fileExists(link_location))
-            links = fileManager.load(link_location);
+        // Load saved functions
+        if (fileManager.fileExists(function_location))
+            functions = fileManager.load(function_location);
         else
         {
-            links = new HashMap<>();
-            fileManager.save(links, link_location);
+            functions = new HashMap<>();
+            fileManager.save(functions, function_location);
+        }
+
+        // Load saved memories
+        if (fileManager.fileExists(memory_location))
+            memories = fileManager.load(memory_location);
+        else
+        {
+            memories = new HashMap<>();
+            fileManager.save(memories, memory_location);
         }
     }
 
@@ -186,66 +198,6 @@ public final class PropertiesManager implements Constants {
 
     /**
      * ===========================================
-     * Getter for the existence of a link:
-     *
-     * @param name: The name of the link
-     * @return Whether or not the link exists
-     * ===========================================
-     */
-
-    public boolean isLink(String name)
-    {
-        return links.containsKey(name);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Setter for a link:
-     *
-     * @param name: The name of the link
-     * @param link: The new link
-     * If the link is empty, it is removed from
-     *  the name
-     * Upon setting the new link, the file is saved
-     * ===========================================
-     */
-
-    public void setLink(String name, String link)
-    {
-        links.put(name, link);
-        if (link.equals(""))
-            links.remove(link);
-        fileManager.save(links, link_location);
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Getter for a link:
-     *
-     * @param name: The name of the link
-     * @return The link associated with the name
-     *         "(None Assigned)" if no link is found
-     * ===========================================
-     */
-
-    public String getLink(String name)
-    {
-        return links.containsKey(name) ? links.get(name) : "(None Assigned)";
-    }
-
-
-
-
-    /**
-     * ===========================================
      * Setter for a property of the bot:
      *
      * @param property: The name of the property
@@ -320,5 +272,87 @@ public final class PropertiesManager implements Constants {
         {
             e.printStackTrace();
         }
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Setter for a memory:
+     *
+     * @param name: The name of the memory
+     * @param memory: The new memory
+     * If the memory is empty, it is removed from
+     *  the name
+     * Upon setting the new memory, the file is saved
+     * ===========================================
+     */
+
+    public void remember(String name, String memory)
+    {
+        memories.put(name, memory);
+        if (memory.equals(""))
+            memories.remove(memory);
+        fileManager.save(memories, memory_location);
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for a memory:
+     *
+     * @param name: The name of the memory
+     * @return The memory associated with the name
+     *         An error if no memory is found
+     * ===========================================
+     */
+
+    public String recall(String name)
+    {
+        return memories.containsKey(name) ? memories.get(name) : "Unfortunately, I cannot recall that.";
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Setter for a equation:
+     *
+     * @param function: The function the equation is saved as
+     * @param equation: The new equation
+     * Upon setting the new equation, the file is saved
+     * ===========================================
+     */
+
+    public void saveFunction(String function, String equation)
+    {
+        functions.put(function, equation);
+        fileManager.save(functions, function_location);
+    }
+
+
+
+
+
+    /**
+     * ===========================================
+     * Getter for an equation:
+     *
+     * @param function: The function the equation is saved as
+     * @return The equation associated with the function
+     *         "" if no equation is found
+     * ===========================================
+     */
+
+    public String getFunction(String function)
+    {
+        return functions.containsKey(function) ? functions.get(function) : "";
     }
 }

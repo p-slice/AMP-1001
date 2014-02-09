@@ -7,7 +7,7 @@ import org.pircbotx.User;
 
 import java.io.Serializable;
 
-public final class CommandReload extends Command implements Serializable {
+public final class CommandReset extends Command implements Serializable {
 
     /*
      * ===========================================
@@ -18,9 +18,9 @@ public final class CommandReload extends Command implements Serializable {
      * ===========================================
      */
 
-    public CommandReload()
+    public CommandReset()
     {
-        super("reload", 10, "", "Reload all bot files", true);
+        super("reset", 10, "<command>", "Reset a command to default values", true);
     }
 
     /**
@@ -31,18 +31,28 @@ public final class CommandReload extends Command implements Serializable {
      * @param channel: The channel the command was sent in
      * @param sender: The user the command was sent by
      * @param args: The arguments sent with the command
-     * This command will make the bot attempt to reload
-     *     all its files
+     * This command will reset the settings of a specified
+     *     command to their defaults
      * ===========================================
      */
 
     public void execute(AmpBot bot, Channel channel, User sender, String... args)
     {
-        // Command requires no arguments
-        if (args.length == 0)
+        // Command requires one argument - the name of the command
+        if (args.length == 1)
         {
-            bot.loadAllFiles();
-            bot.sendMessage(channel, "All files reloaded!");
+            // Check if the command exists
+            if (bot.getCommandManager().isCommand(args[0].toLowerCase()))
+            {
+                Command command = bot.getCommandManager().getCommand(args[0].toLowerCase());
+                command.reset();
+                bot.sendMessage(channel, "The command " + args[0].toLowerCase() + " has been reset.");
+                bot.getCommandManager().saveCommands();
+            }
+
+            // Throw an error if it doesn't
+            else
+                CommandManager.throwUnknownCommandError(bot, sender, args[0]);
         }
 
         // Throw an error if the parameters are incorrect

@@ -2,12 +2,13 @@ package net.pslice.bot.commands;
 
 import net.pslice.bot.AmpBot;
 import net.pslice.bot.managers.CommandManager;
+import net.pslice.bot.managers.PropertiesManager;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
 import java.io.Serializable;
 
-public final class CommandReload extends Command implements Serializable {
+public final class CommandRemember extends Command implements Serializable {
 
     /*
      * ===========================================
@@ -18,9 +19,9 @@ public final class CommandReload extends Command implements Serializable {
      * ===========================================
      */
 
-    public CommandReload()
+    public CommandRemember()
     {
-        super("reload", 10, "", "Reload all bot files", true);
+        super("remember", 7, "<name> (new memory)", "Save or recall a memory", true);
     }
 
     /**
@@ -31,18 +32,28 @@ public final class CommandReload extends Command implements Serializable {
      * @param channel: The channel the command was sent in
      * @param sender: The user the command was sent by
      * @param args: The arguments sent with the command
-     * This command will make the bot attempt to reload
-     *     all its files
+     * This command will save and return text from a file
      * ===========================================
      */
 
     public void execute(AmpBot bot, Channel channel, User sender, String... args)
     {
-        // Command requires no arguments
-        if (args.length == 0)
+        PropertiesManager propertiesManager = bot.getPropertiesManager();
+
+        // One argument - recall a memory
+        if (args.length == 1)
+            bot.sendMessage(channel, propertiesManager.recall(args[0].toLowerCase()));
+
+        // Multiple arguments - save a memory
+        else if (args.length > 1)
         {
-            bot.loadAllFiles();
-            bot.sendMessage(channel, "All files reloaded!");
+            String memory = args[0].toLowerCase();
+            String memoryS = args[1];
+            for (int i = 2; i < args.length; i++)
+                memoryS += " " + args[i];
+
+            propertiesManager.remember(memory, memoryS);
+            bot.sendMessage(channel, "Saved to memory.");
         }
 
         // Throw an error if the parameters are incorrect

@@ -5,7 +5,23 @@ import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-public final class CommandAction implements Command {
+import java.io.Serializable;
+
+public final class CommandAction extends Command implements Serializable {
+
+    /*
+     * ===========================================
+     * Initializer:
+     *
+     * The master Command class is initialized with defaults
+     *     specific to the command
+     * ===========================================
+     */
+
+    public CommandAction()
+    {
+        super("action", 7, "(#channel) <action>", "Send an action to a channel", true);
+    }
 
     /**
      * ===========================================
@@ -14,7 +30,6 @@ public final class CommandAction implements Command {
      * @param bot: The bot the command was sent to
      * @param channel: The channel the command was sent in
      * @param sender: The user the command was sent by
-     * @param command: The name of the command
      * @param args: Any arguments that were sent with the command
      * This command will make the bot attempt to send an action into
      *     either the channel the command was sent in
@@ -22,7 +37,7 @@ public final class CommandAction implements Command {
      * ===========================================
      */
 
-    public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
+    public void execute(AmpBot bot, Channel channel, User sender, String... args)
     {
         // If the first word starts with '#', the bot tries to send the action to that channel
         if (args.length > 1
@@ -59,6 +74,6 @@ public final class CommandAction implements Command {
         }
         // Throw an error if the parameters are incorrect
         else
-            CommandManager.throwIncorrectParametersError(bot, sender, command);
+            CommandManager.throwIncorrectParametersError(bot, sender, this);
     }
 }

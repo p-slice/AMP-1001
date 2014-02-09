@@ -79,236 +79,50 @@ public final class BotProperties {
 
 
 
-    /**
+    /*
      * ===========================================
-     * Default classes for commands:
+     * Default alert statuses:
      *
-     * @return The default classes
-     * If no loadable classes can be found, these get
+     * If no loadable statuses can be found, these get
      *     saved in their place
      * ===========================================
      */
 
-    public static HashMap<String, Class<?>> defaultClasses()
+    public static HashMap<String, Command> defaultCommands()
     {
-        HashMap<String, Class<?>> classes = new HashMap<>();
+        HashMap<String, Command> commands = new HashMap<>();
 
-        // Listed in alphabetical order:
+        commands.put("action", new CommandAction());
+        commands.put("alert", new CommandAlert());
+        commands.put("function", new CommandFunction());
+        commands.put("help", new CommandHelp());
+        commands.put("identify", new CommandIdentify());
+        commands.put("info", new CommandInfo());
+        commands.put("input", new CommandInput());
+        commands.put("join", new CommandJoin());
+        commands.put("kick", new CommandKick());
+        commands.put("leave", new CommandLeave());
+        commands.put("override", new CommandOverride());
+        commands.put("ping", new CommandPing());
+        commands.put("quit", new CommandQuit());
+        commands.put("reload", new CommandReload());
+        commands.put("remember", new CommandRemember());
+        commands.put("rename", new CommandRename());
+        commands.put("reset", new CommandReset());
+        commands.put("restart", new CommandRestart());
+        commands.put("say", new CommandSay());
+        commands.put("setcommand", new CommandSet());
+        commands.put("setproperty", new CommandSetProperty());
+        commands.put("setuser", new CommandSetUser());
+        commands.put("solve", new CommandSolve());
+        commands.put("twerk", new CommandTwerk());
+        commands.put("user", new CommandUser());
+        commands.put("verbose", new CommandVerbose());
 
-        classes.put("action", CommandAction.class);
-        classes.put("alert", CommandAlert.class);
-        classes.put("help", CommandHelp.class);
-        classes.put("identify", CommandIdentify.class);
-        classes.put("join", CommandJoin.class);
-        classes.put("kick", CommandKick.class);
-        classes.put("leave", CommandLeave.class);
-        classes.put("link", CommandLink.class);
-        classes.put("override", CommandOverride.class);
-        classes.put("ping", CommandPing.class);
-        classes.put("quit", CommandQuit.class);
-        classes.put("reload", CommandReload.class);
-        classes.put("rename", CommandRename.class);
-        // classes.put("restart", CommandRestart.class);   <- This command is currently broken...
-        classes.put("say", CommandSay.class);
-        classes.put("setcommand", CommandSet.class);
-        classes.put("setproperty", CommandProperties.class);
-        classes.put("setuser", CommandSetUser.class);
-        classes.put("solve", CommandSolve.class);
-        classes.put("toggleinputmethod", CommandInput.class);
-        classes.put("twerk", CommandTwerk.class);
-        classes.put("user", CommandUser.class);
-        classes.put("verbose", CommandVerbose.class);
-
-        return classes;
+        return commands;
     }
 
 
-
-
-
-    /**
-     * ===========================================
-     * Default ranks for commands:
-     *
-     * @return Default ranks
-     * If no loadable ranks can be found, these get
-     *     saved in their place
-     * ===========================================
-     */
-
-    public static HashMap<String, Integer> defaultRanks()
-    {
-        HashMap<String, Integer> ranks = new HashMap<>();
-
-        // Listed in order of rank:
-
-        ranks.put("help", 0);
-        ranks.put("ping", 0);
-        ranks.put("solve", 0);
-        ranks.put("twerk", 0);
-        ranks.put("user", 0);
-        ranks.put("link", 5);
-        ranks.put("action", 7);
-        ranks.put("identify", 7);
-        ranks.put("join", 7);
-        ranks.put("leave", 7);
-        ranks.put("reload", 7);
-        ranks.put("restart", 7);
-        ranks.put("say", 7);
-        ranks.put("toggleinputmethod", 7);
-        ranks.put("verbose", 7);
-        ranks.put("alert", 10);
-        ranks.put("kick", 10);
-        ranks.put("override", 10);
-        ranks.put("quit", 10);
-        ranks.put("rename", 10);
-        ranks.put("setcommand", 10);
-        ranks.put("setproperty", 10);
-        ranks.put("setuser", 10);
-
-        return ranks;
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Default parameters for commands:
-     *
-     * @return Default parameters
-     * If no loadable parameters can be found, these get
-     *     saved in their place
-     * ===========================================
-     */
-
-    public static HashMap<String, String> defaultParameters()
-    {
-        HashMap<String, String> parameters = new HashMap<>();
-
-        // Listed in alphabetical order:
-
-        parameters.put("action", "action (#channel) <activity>");
-        parameters.put("alert", "alert <event>");
-        parameters.put("help", "help (command)");
-        parameters.put("identify", "identify");
-        parameters.put("join", "join <#channel>");
-        parameters.put("kick", "kick <user> (reason)");
-        parameters.put("leave", "leave (#channel)");
-        parameters.put("link", "link <name> (new link)");
-        parameters.put("override", "override");
-        parameters.put("ping", "ping");
-        parameters.put("quit", "quit");
-        parameters.put("reload", "reload");
-        parameters.put("rename", "rename <name>");
-        parameters.put("restart", "restart");
-        parameters.put("say", "say (#channel) <message>");
-        parameters.put("setcommand", "setcommand <setting> <command> <value>");
-        parameters.put("setproperty", "setproperty <property> <value>");
-        parameters.put("setuser", "setuser <setting> <user> <value>");
-        parameters.put("solve", "solve <equation>");
-        parameters.put("toggleinputmethod", "toggleinputmethod");
-        parameters.put("twerk", "twerk");
-        parameters.put("user", "user (setting) <user>");
-        parameters.put("verbose", "verbose");
-
-        return parameters;
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Default descriptions for commands:
-     *
-     * @return Default descriptions
-     * If no loadable descriptions can be found, these get
-     *     saved in their place
-     * ===========================================
-     */
-
-    public static HashMap<String, String> defaultDescriptions()
-    {
-        HashMap<String, String> descriptions = new HashMap<>();
-
-        // Listed in alphabetical order
-
-        descriptions.put("action", "Send an action to a channel");
-        descriptions.put("alert", "Toggle alerts for server events");
-        descriptions.put("help", "Get info about commands");
-        descriptions.put("identify", "Log in with NickServ");
-        descriptions.put("join", "Join a channel");
-        descriptions.put("kick", "Kick a player from the channel");
-        descriptions.put("leave", "Leave a channel");
-        descriptions.put("link", "Save and load links to websites");
-        descriptions.put("override", "Toggle Override mode");
-        descriptions.put("ping", "Check if the bot is alive");
-        descriptions.put("quit", "Leave the server");
-        descriptions.put("reload", "Reload all bot files");
-        descriptions.put("rename", "Change the name of the bot");
-        descriptions.put("restart", "Restart the bot (Currently broken)");
-        descriptions.put("say", "Send a message to a channel");
-        descriptions.put("setcommand", "Change the setting of a command");
-        descriptions.put("setproperty", "Set a property of the bot");
-        descriptions.put("setuser", "Change the setting of a user");
-        descriptions.put("solve", "Solve a simple equation");
-        descriptions.put("toggleinputmethod", "Toggle input method");
-        descriptions.put("twerk", "Test your twerking skills");
-        descriptions.put("user", "Get info about a user");
-        descriptions.put("verbose", "Toggle verbosity to the console");
-
-        return descriptions;
-    }
-
-
-
-
-
-    /**
-     * ===========================================
-     * Default enabled states for commands:
-     *
-     * @return Default states
-     * If no loadable states can be found, these get
-     *     saved in their place
-     * ===========================================
-     */
-
-    public static HashMap<String, Boolean> defaultEnabledStates()
-    {
-        HashMap<String, Boolean> parameters = new HashMap<>();
-
-        // Listed in alphabetical order:
-
-        parameters.put("action", true);
-        parameters.put("alert", true);
-        parameters.put("help", true);
-        parameters.put("identify", true);
-        parameters.put("join", true);
-        parameters.put("kick", true);
-        parameters.put("leave", true);
-        parameters.put("link", true);
-        parameters.put("override", true);
-        parameters.put("ping", true);
-        parameters.put("quit", true);
-        parameters.put("reload", true);
-        parameters.put("rename", true);
-        parameters.put("restart", false);
-        parameters.put("say", true);
-        parameters.put("setcommand", true);
-        parameters.put("setproperty", true);
-        parameters.put("setuser", true);
-        parameters.put("solve", true);
-        parameters.put("toggleinputmethod", true);
-        parameters.put("twerk", true);
-        parameters.put("user", true);
-        parameters.put("verbose", true);
-
-        return parameters;
-    }
 
 
 

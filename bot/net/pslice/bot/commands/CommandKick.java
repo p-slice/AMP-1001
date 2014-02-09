@@ -5,7 +5,23 @@ import net.pslice.bot.managers.CommandManager;
 import org.pircbotx.Channel;
 import org.pircbotx.User;
 
-public final class CommandKick implements Command {
+import java.io.Serializable;
+
+public final class CommandKick extends Command implements Serializable {
+
+    /*
+     * ===========================================
+     * Initializer:
+     *
+     * The master Command class is initialized with defaults
+     *     specific to the command
+     * ===========================================
+     */
+
+    public CommandKick()
+    {
+        super("kick", 10, "<user> (reason)", "Kick a player from the channel", true);
+    }
 
     /**
      * ===========================================
@@ -14,7 +30,6 @@ public final class CommandKick implements Command {
      * @param bot: The bot the command was sent to
      * @param channel: The channel the command was sent in
      * @param sender: The user the command was sent by
-     * @param command: The name of the command
      * @param args: Any arguments that were sent with the command
      * This command will make the bot attempt to kick a user
      *     from the channel the command was sent in. The sender can
@@ -24,7 +39,7 @@ public final class CommandKick implements Command {
      * ===========================================
      */
 
-    public void execute(AmpBot bot, Channel channel, User sender, String command, String... args)
+    public void execute(AmpBot bot, Channel channel, User sender, String... args)
     {
         // Check if the bot has Op in the channel
         if (channel.isOp(bot.getUserBot()))
@@ -36,7 +51,7 @@ public final class CommandKick implements Command {
                 if (bot.getUser(args[0]).getChannels().contains(channel))
                     bot.kick(channel, bot.getUser(args[0]), "Kicked from channel");
 
-                // Throw an error if they aren't
+                    // Throw an error if they aren't
                 else
                     CommandManager.throwGenericError(bot, sender, String.format("The user '%s' is not in this channel!", args[0]));
             }
@@ -60,11 +75,11 @@ public final class CommandKick implements Command {
 
             // Throw an error if the parameters are incorrect
             else
-                CommandManager.throwIncorrectParametersError(bot, sender, command);
+                CommandManager.throwIncorrectParametersError(bot, sender, this);
         }
 
         // Throw an error if not Op
+        else
             bot.sendMessage(channel, "I would if I could but I can't so I won't.");
-
     }
 }
